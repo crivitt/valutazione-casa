@@ -210,10 +210,18 @@
             <strong>Analisi completata!</strong> Abbiamo incrociato i dati con <strong id="random-count">--</strong> <strong>immobili simili</strong> a <span id="city-placeholder">Trezzano</span>.
         </div>
     </div>
+    
     <div class="space-y-4">
         <input type="text" id="nome" placeholder="Nome e Cognome" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
         <input type="email" id="email" placeholder="Email" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
         <input type="tel" id="telefono" placeholder="Telefono" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
+        
+        <div class="flex items-start gap-3 p-2">
+            <input type="checkbox" id="privacy" class="mt-1 w-5 h-5 accent-blue-600 cursor-pointer">
+            <label for="privacy" class="text-xs text-gray-500 leading-tight">
+                Accetto la <a href="privacy.html" target="_blank" class="text-blue-600 underline">Privacy Policy</a> e acconsento al trattamento dei dati. I dati potranno essere condivisi con agenzie partner per la valutazione.
+            </label>
+        </div>
     </div>
 </div>
 
@@ -235,7 +243,7 @@ let selectedTipo = "";
 let debounceTimer;
 let citySelected = "tua zona"; // VARIABILE GLOBALE FISSA
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiY3Jpdml0dCIsImEiOiJjbWphM3hqbWMwMWQ1M2RzODhhaDlpb2Q3In0.CA7JXYd4yCnraCL8uYzcvQ';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiY3Jpdml0dCIsImEiOiJjbWphYXIycG4wM2QyM2RxcWdkb2FpcjM1In0.6a_5qSIrRaWQyPZJgotUbw';
 
 window.onload = () => {
     generateTotalePiani();
@@ -357,7 +365,20 @@ function handleAscensore(btn) {
 
 function nextStep() {
     if (currentStep === totalSteps) {
-        if (!document.getElementById('email').value) { alert("Inserisci i dati per la valutazione."); return; }
+        // Validazione finale
+        const email = document.getElementById('email').value;
+        const nome = document.getElementById('nome').value;
+        const privacy = document.getElementById('privacy').checked;
+
+        if (!nome || !email) { 
+            alert("Per favore, inserisci nome ed email per ricevere il report."); 
+            return; 
+        }
+        if (!privacy) { 
+            alert("È necessario accettare la Privacy Policy per procedere."); 
+            return; 
+        }
+        
         showLoadingAndResults();
         return;
     }
@@ -406,25 +427,47 @@ function updateUI() {
     window.scrollTo(0,0);
 }
 
-function showLoadingAndResults() {
+async function showLoadingAndResults() {
+    // 1. Raccogliamo tutti i dati sparsi nel form
+    const formData = {
+        indirizzo: document.getElementById('address-input').value,
+        citta: citySelected,
+        mq: document.getElementById('mq').value,
+        tipo_immobile: selectedTipo,
+        locali: document.querySelector('[data-step="3"] .grid .selected')?.innerText || "N/D",
+        bagni: document.querySelectorAll('[data-step="3"] .grid')[1]?.querySelector('.selected')?.innerText || "N/D",
+        piano: document.querySelector('#piano-singolo-container .selected')?.innerText || "N/D",
+        stato: document.querySelector('[data-step="5"] .grid .selected')?.innerText || "N/D",
+        classe_energetica: document.querySelectorAll('[data-step="5"] .grid')[1]?.querySelector('.selected')?.innerText || "N/D",
+        nome: document.getElementById('nome').value,
+        email: document.getElementById('email').value,
+        telefono: document.getElementById('telefono').value,
+        consenso_privacy: document.getElementById('privacy').checked ? "Accettato" : "No",
+        timestamp: new Date().toLocaleString("it-IT")
+    };
+
+    // 2. UI di Caricamento
     const main = document.querySelector('main');
-    main.innerHTML = `<div class="w-full max-w-xl text-center py-20"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-6"></div><h2 class="text-2xl font-bold mb-2">Analisi AI in corso...</h2><p id="loading-msg" class="text-gray-500">Recupero prezzi di mercato...</p></div>`;
+    main.innerHTML = `<div class="w-full max-w-xl text-center py-20"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-6"></div><h2 class="text-2xl font-bold mb-2">Analisi in corso...</h2><p id="loading-msg" class="text-gray-500">Stiamo elaborando i dati per ${citySelected}...</p></div>`;
     document.querySelector('.footer-nav').style.display = 'none';
-    
-    const msgs = [
-        `Analisi del mercato a ${citySelected}...`, 
-        "Incrocio dati catastali...", 
-        "Generazione report finale..."
-    ];
-    
-    let i = 0;
-    const interval = setInterval(() => {
-        if (i < msgs.length) document.getElementById('loading-msg').innerText = msgs[i++];
-        else {
-            clearInterval(interval);
-            main.innerHTML = `<div class="text-center py-20"><h2 class="text-3xl font-bold text-blue-600 mb-4">Ottimo lavoro!</h2><p class="text-gray-600 text-lg">La valutazione per l'immobile a ${citySelected} è pronta.<br><br>Controlla la tua email per il report completo.</p></div>`;
-        }
-    }, 1500);
+
+    // 3. INVIO A MAKE.COM
+    try {
+        const response = await fetch("https://hook.eu1.make.com/vypj6pof43fnqb84icw01dkapqjft4s8", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            main.innerHTML = `<div class="text-center py-20">
+                <h2 class="text-3xl font-bold text-blue-600 mb-4">Ottimo lavoro!</h2>
+                <p class="text-gray-600 text-lg">La valutazione per l'immobile a ${citySelected} è stata inviata correttamente.<br><br>Ti contatteremo a breve per il report completo.</p>
+            </div>`;
+        } else { throw new Error(); }
+    } catch (e) {
+        main.innerHTML = `<div class="text-center py-20"><h2 class="text-xl font-bold text-red-600">Errore di connessione</h2><p>Non siamo riusciti a inviare i dati. Riprova tra poco.</p></div>`;
+    }
 }
 
 document.addEventListener('click', (e) => {
