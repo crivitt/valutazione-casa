@@ -24,6 +24,16 @@
         .check-mark { width: 20px; height: 20px; border: 2px solid #e5e7eb; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .selected .check-mark { background-color: #2563eb; border-color: #2563eb; }
         .selected .check-mark::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
+        
+        #address-input::placeholder { color: #9ca3af; font-weight: 400; }
+
+        .step[data-step="1"] { animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        #autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 1rem 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 1000; max-height: 250px; overflow-y: auto; }
+        .autocomplete-item { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #f3f4f6; font-size: 0.95rem; transition: background 0.2s; }
+        .autocomplete-item:hover { background-color: #f0f7ff; }
+        .autocomplete-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -44,8 +54,41 @@
             <form id="valuationForm">
                 
                 <div class="step active" data-step="1">
-                    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">Qual è l'indirizzo della casa?</h1>
-                    <input type="text" id="address-input" placeholder="Via, civico, città..." class="w-full p-5 border rounded-lg shadow-sm">
+                    <div class="text-center mb-10">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Servizio Gratuito</span>
+                        <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mt-4 mb-6 leading-tight">
+                            Scopri il valore reale della tua casa <span class="text-blue-600">al miglior prezzo.</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 max-w-lg mx-auto">
+                            Ottieni una valutazione professionale basata sui prezzi reali di vendita del tuo quartiere.
+                        </p>
+                    </div>
+
+                    <div class="relative max-w-lg mx-auto mb-10">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                            <span class="text-xl">📍</span>
+                        </div>
+                        <input type="text" id="address-input" 
+                               placeholder="Inserisci indirizzo (es: Via Roma 1...)" 
+                               autocomplete="off"
+                               class="w-full p-6 pl-12 text-lg border-2 border-gray-100 rounded-2xl shadow-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all outline-none relative z-0">
+                        <div id="autocomplete-list"></div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto border-t border-gray-100 pt-8">
+                        <div class="text-center">
+                            <div class="text-xl mb-1">⏱️</div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter leading-3">Richiede<br>2 minuti</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl mb-1">📊</div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter leading-3">Dati OMI<br>Aggiornati</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl mb-1">🔒</div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter leading-3">Privacy<br>Garantita</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="step" data-step="2">
@@ -104,91 +147,75 @@
                     </div>
                 </div>
 
-                <div class="step" data-step="5">
-                    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">Dati tecnici dell'immobile</h1>
-                    <div class="space-y-8">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-500 uppercase mb-3">Qual è l'anno di costruzione?</label>
-                            <input type="number" id="anno-costruzione" placeholder="Esempio: 1995" class="w-full p-5 border rounded-lg shadow-sm" oninput="validateYear(this)">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-500 uppercase mb-3">Qual è la classe energetica?</label>
-                            <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
-                                <button type="button" onclick="handleSelection(this, 'A')" class="option-btn !p-3 text-center !text-base rounded-lg">A4</button>
-                                <button type="button" onclick="handleSelection(this, 'A')" class="option-btn !p-3 text-center !text-base rounded-lg">A3</button>
-                                <button type="button" onclick="handleSelection(this, 'A')" class="option-btn !p-3 text-center !text-base rounded-lg">A2</button>
-                                <button type="button" onclick="handleSelection(this, 'A')" class="option-btn !p-3 text-center !text-base rounded-lg">A1</button>
-                                <button type="button" onclick="handleSelection(this, 'B')" class="option-btn !p-3 text-center !text-base rounded-lg">B</button>
-                                <button type="button" onclick="handleSelection(this, 'C')" class="option-btn !p-3 text-center !text-base rounded-lg">C</button>
-                                <button type="button" onclick="handleSelection(this, 'D')" class="option-btn !p-3 text-center !text-base rounded-lg">D</button>
-                                <button type="button" onclick="handleSelection(this, 'E')" class="option-btn !p-3 text-center !text-base rounded-lg">E</button>
-                                <button type="button" onclick="handleSelection(this, 'F')" class="option-btn !p-3 text-center !text-base rounded-lg">F</button>
-                                <button type="button" onclick="handleSelection(this, 'G')" class="option-btn !p-3 text-center !text-base rounded-lg">G</button>
-                                <button type="button" onclick="handleSelection(this, 'G')" class="option-btn !p-3 text-center !text-base rounded-lg">H</button>
-                                <button type="button" onclick="handleSelection(this, 'non-so')" class="option-btn !p-3 text-center !text-xs rounded-lg">Non so</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="step" data-step="5">
+    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">Stato dell'immobile</h1>
+    
+    <div class="mb-8">
+        <label class="block text-sm font-semibold text-gray-500 uppercase mb-3 text-center">In che condizioni è la casa?</label>
+        <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm rounded-lg">Da ristrutturare</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm rounded-lg">Abitabile</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm rounded-lg">Ristrutturato</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm rounded-lg">Nuova Costruzione</button>
+        </div>
+    </div>
 
-                <div class="step" data-step="6">
-                    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">In che condizioni è la casa?</h1>
-                    <div class="space-y-3">
-                        <button type="button" onclick="handleSelection(this, 'da-ristrutturare')" class="option-btn rounded-lg">Da ristrutturare</button>
-                        <button type="button" onclick="handleSelection(this, 'buona-abitabile')" class="option-btn rounded-lg">Buona / Abitabile</button>
-                        <button type="button" onclick="handleSelection(this, 'ottima-ristrutturata')" class="option-btn rounded-lg">Ottima / Ristrutturata</button>
-                        <button type="button" onclick="handleSelection(this, 'nuova-costruzione')" class="option-btn rounded-lg">Nuova costruzione</button>
-                    </div>
-                </div>
+    <div>
+        <label class="block text-sm font-semibold text-gray-500 uppercase mb-3 text-center">Classe Energetica</label>
+        <div class="grid grid-cols-4 gap-2">
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">A4</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">A3</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">A2</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">A1</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">B</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">C</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">D</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">E</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">F</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">G</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-sm rounded-lg">H</button>
+            <button type="button" onclick="selectGrid(this)" class="option-btn !p-2 text-center !text-xs rounded-lg">Non so</button>
+        </div>
+    </div>
+</div>
 
-                <div class="step" data-step="7">
-                    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">Ancora qualche dettaglio</h1>
-                    <div class="space-y-8">
-                        <div id="ascensore-box" class="hidden">
-                            <label class="block text-sm font-semibold text-gray-400 uppercase mb-3 text-center tracking-wider">C'è un ascensore?</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button type="button" onclick="handleAscensore(this, 'si')" class="option-btn !text-center rounded-lg">Sì</button>
-                                <button type="button" onclick="handleAscensore(this, 'no')" class="option-btn !text-center rounded-lg">No</button>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-400 uppercase mb-3 text-center tracking-wider">Qualcosa da aggiungere?</label>
-                            <div class="space-y-2" id="accessori-container">
-                                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Balcone</span><div class="check-mark"></div></button>
-                                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Terrazzo</span><div class="check-mark"></div></button>
-                                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Giardino</span><div class="check-mark"></div></button>
-                                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Box Auto</span><div class="check-mark"></div></button>
-                                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Cantina</span><div class="check-mark"></div></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="step" data-step="6">
+    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">Dettagli aggiuntivi</h1>
+    <div class="space-y-8">
+        <div id="ascensore-box" class="hidden">
+            <label class="block text-sm font-semibold text-gray-400 uppercase mb-3 text-center tracking-wider">C'è un ascensore?</label>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" onclick="selectGrid(this)" class="option-btn !text-center rounded-lg">Sì</button>
+                <button type="button" onclick="selectGrid(this)" class="option-btn !text-center rounded-lg">No</button>
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-semibold text-gray-400 uppercase mb-3 text-center tracking-wider">Pertinenze incluse</label>
+            <div class="space-y-2">
+                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Balcone</span><div class="check-mark"></div></button>
+                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Terrazzo</span><div class="check-mark"></div></button>
+                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Giardino</span><div class="check-mark"></div></button>
+                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Box Auto</span><div class="check-mark"></div></button>
+                <button type="button" onclick="toggleMultiple(this)" class="option-btn check-option rounded-lg"><span>Cantina</span><div class="check-mark"></div></button>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <div class="step" data-step="8">
-                    <h1 class="text-2xl md:text-3xl font-bold text-center mb-2">Ci siamo quasi!</h1>
-                    
-                    <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-xl mb-6 border border-blue-100">
-                        <div class="text-2xl">📊</div>
-                        <div class="text-sm text-blue-800">
-                            <strong>Analisi completata!</strong> Abbiamo incrociato i dati con <strong id="random-count">--</strong> <strong>immobili simili</strong> a Trezzano. Inserisci i dati per sbloccare il valore.
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-400 uppercase mb-1 ml-1">Nome e Cognome</label>
-                            <input type="text" id="nome" placeholder="Mario Rossi" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-400 uppercase mb-1 ml-1">Email</label>
-                            <input type="email" id="email" placeholder="mario.rossi@esempio.it" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-400 uppercase mb-1 ml-1">Telefono</label>
-                            <input type="tel" id="telefono" placeholder="333 1234567" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
-                        </div>
-                    </div>
-                </div>
+<div class="step" data-step="7">
+    <h1 class="text-2xl md:text-3xl font-bold text-center mb-2">Ci siamo quasi!</h1>
+    <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-xl mb-6 border border-blue-100">
+        <div class="text-2xl">📊</div>
+        <div class="text-sm text-blue-800">
+            <strong>Analisi completata!</strong> Abbiamo incrociato i dati con <strong id="random-count">--</strong> <strong>immobili simili</strong> a <span id="city-placeholder">Trezzano</span>.
+        </div>
+    </div>
+    <div class="space-y-4">
+        <input type="text" id="nome" placeholder="Nome e Cognome" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
+        <input type="email" id="email" placeholder="Email" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
+        <input type="tel" id="telefono" placeholder="Telefono" class="w-full p-4 border rounded-lg outline-none focus:border-blue-600">
+    </div>
+</div>
 
             </form>
         </div>
@@ -202,149 +229,207 @@
     </footer>
 
 <script>
-    let currentStep = 1;
-    const totalSteps = 8;
-    let selectedTipo = "";
+let currentStep = 1;
+const totalSteps = 7;
+let selectedTipo = "";
+let debounceTimer;
+let citySelected = "tua zona"; // VARIABILE GLOBALE FISSA
 
-    // Inizializzazione Step 4
-    const containerTotale = document.getElementById('totale-piani-container');
-    if (containerTotale) {
-        for (let i = 1; i <= 10; i++) {
-            const label = i === 10 ? '10+' : i;
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'option-btn !p-3 text-center !text-base rounded-lg';
-            btn.innerText = label;
-            btn.onclick = () => handleTotalePiani(i, btn);
-            containerTotale.appendChild(btn);
-        }
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiY3Jpdml0dCIsImEiOiJjbWphM3hqbWMwMWQ1M2RzODhhaDlpb2Q3In0.CA7JXYd4yCnraCL8uYzcvQ';
+
+window.onload = () => {
+    generateTotalePiani();
+    updateUI();
+};
+
+function generateTotalePiani() {
+    const container = document.getElementById('totale-piani-container');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-btn !p-3 text-center !text-base rounded-lg';
+        btn.innerText = i === 10 ? '10+' : i;
+        btn.onclick = () => handleTotalePiani(i, btn);
+        container.appendChild(btn);
     }
+}
 
-    function handleSelection(btn, value) {
-        const siblings = btn.parentElement.querySelectorAll('.option-btn');
-        siblings.forEach(s => s.classList.remove('selected'));
-        btn.classList.add('selected');
-        if (currentStep === 2) selectedTipo = value;
-        setTimeout(() => { nextStep(); }, 400);
-    }
+const addressInput = document.getElementById('address-input');
+const autocompleteList = document.getElementById('autocomplete-list');
 
-    function selectGrid(btn) {
-        const container = btn.parentElement;
-        container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-    }
-
-    function toggleMultiple(btn) { btn.classList.toggle('selected'); }
-
-    function handleTotalePiani(num, btn) {
-        containerTotale.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        const isVilla = ['villa-indipendente', 'villetta-schiera'].includes(selectedTipo);
-        if (isVilla) {
-            nextStep();
-        } else {
-            generatePianoSingolo(num);
-            const pb = document.getElementById('piano-specifico-box');
-            pb.classList.remove('hidden');
-            setTimeout(() => { pb.classList.add('opacity-100'); }, 50);
-        }
-    }
-
-    function generatePianoSingolo(max) {
-        const container = document.getElementById('piano-singolo-container');
-        container.innerHTML = '';
-        for (let i = 0; i <= (max === 10 ? 10 : max); i++) {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'option-btn !p-3 text-center !text-base rounded-lg';
-            btn.innerText = i === 0 ? 'T' : (i === 10 ? '10+' : i);
-            btn.onclick = () => {
-                container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                setTimeout(() => { nextStep(); }, 400);
-            };
-            container.appendChild(btn);
-        }
-    }
-
-    function validateYear(input) {
-        if (input.value.length >= 4) {
-            const year = parseInt(input.value);
-            const curr = new Date().getFullYear();
-            if (year > curr) input.value = curr;
-            if (year < 1900) input.value = 1900;
-        }
-    }
-
-    function handleAscensore(btn) {
-        btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-    }
-
-    function nextStep() {
-        if (currentStep === totalSteps) {
-            const nome = document.getElementById('nome').value;
-            const email = document.getElementById('email').value;
-            if (!nome || !email) { alert("Inserisci nome ed email!"); return; }
-            showLoadingAndResults();
+if (addressInput) {
+    addressInput.addEventListener('input', function() {
+        const query = this.value;
+        clearTimeout(debounceTimer);
+        if (query.length < 3) {
+            if (autocompleteList) autocompleteList.innerHTML = '';
             return;
         }
-        if (currentStep < totalSteps) { currentStep++; updateUI(); }
+
+        debounceTimer = setTimeout(() => {
+            // Ricerca universale Mapbox (rimosso proximity specifico)
+            const lng = 9.0610;
+            const lat = 45.4262;
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&autocomplete=true&countries=it&types=address,postcode,place&limit=5&language=it&proximity=${lng},${lat}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!autocompleteList) return;
+                    autocompleteList.innerHTML = '';
+                    if (!data.features) return;
+
+                    data.features.forEach(feature => {
+                        const street = feature.text;
+                        const houseNumber = feature.address || "";
+                        const cityContext = feature.context.find(c => c.id.startsWith('place'));
+                        const city = cityContext ? cityContext.text : "";
+
+                        let cleanAddress = houseNumber ? `${street} ${houseNumber}` : street;
+                        if (city) cleanAddress += `, ${city}`;
+
+                        const div = document.createElement('div');
+                        div.className = 'autocomplete-item';
+                        div.innerHTML = `<span>${cleanAddress}</span>`;
+                        
+                        div.onclick = () => {
+                            addressInput.value = cleanAddress;
+                            citySelected = city || "tua zona"; // ASSEGNAZIONE ALLA GLOBALE
+                            autocompleteList.innerHTML = '';
+                            document.activeElement.blur();
+                            nextStep();
+                        };
+                        autocompleteList.appendChild(div);
+                    });
+                });
+        }, 200);
+    });
+}
+
+function handleSelection(btn, value) {
+    btn.parentElement.querySelectorAll('.option-btn').forEach(s => s.classList.remove('selected'));
+    btn.classList.add('selected');
+    if (currentStep === 2) selectedTipo = value;
+    setTimeout(() => { nextStep(); }, 400);
+}
+
+function selectGrid(btn) {
+    btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+}
+
+function toggleMultiple(btn) { btn.classList.toggle('selected'); }
+
+function handleTotalePiani(num, btn) {
+    document.getElementById('totale-piani-container').querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const isVilla = ['villa-indipendente', 'villetta-schiera'].includes(selectedTipo);
+    const pianoBox = document.getElementById('piano-specifico-box');
+    if (isVilla) { pianoBox.classList.add('hidden'); setTimeout(() => nextStep(), 400); }
+    else { generatePianoSingolo(num); pianoBox.classList.remove('hidden'); setTimeout(() => pianoBox.classList.add('opacity-100'), 50); }
+}
+
+function generatePianoSingolo(max) {
+    const container = document.getElementById('piano-singolo-container');
+    container.innerHTML = '';
+    const limit = max === 10 ? 10 : max;
+    for (let i = 0; i <= limit; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-btn !p-3 text-center !text-base rounded-lg';
+        btn.innerText = i === 0 ? 'T' : (i === 10 ? '10+' : i);
+        btn.onclick = () => {
+            container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            setTimeout(() => nextStep(), 400);
+        };
+        container.appendChild(btn);
     }
+}
 
-    function prevStep() { if (currentStep > 1) { currentStep--; updateUI(); } }
+function handleAscensore(btn) {
+    btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    setTimeout(() => nextStep(), 400);
+}
 
-    function updateUI() {
-        document.querySelectorAll('.step').forEach(s => {
-            s.classList.remove('active');
-            if (parseInt(s.getAttribute('data-step')) === currentStep) s.classList.add('active');
-        });
-
-        const addrBar = document.getElementById('address-bar');
-        if (currentStep > 1) {
-            addrBar.classList.remove('hidden');
-            document.getElementById('summary-text').innerText = document.getElementById('address-input').value || "Indirizzo non inserito";
-        } else addrBar.classList.add('hidden');
-
-        if (currentStep === 7) {
-            const isVilla = ['villa-indipendente', 'villetta-schiera'].includes(selectedTipo);
-            const btnP = document.querySelector('#totale-piani-container .selected');
-            const nP = btnP ? (btnP.innerText === "10+" ? 10 : parseInt(btnP.innerText)) : 1;
-            document.getElementById('ascensore-box').classList.toggle('hidden', isVilla || nP <= 1);
-        }
-
-        if (currentStep === 4) {
-            const isVilla = ['villa-indipendente', 'villetta-schiera'].includes(selectedTipo);
-            document.getElementById('piani-title').innerText = isVilla ? "Quanti piani ha la casa?" : "Quanti piani ci sono nell'edificio?";
-            document.getElementById('piani-label-1').innerText = isVilla ? "Piani totali" : "Totale piani edificio";
-        }
-
-        // GENERAZIONE NUMERO CASUALE STEP 8
-        if (currentStep === 8) {
-            const countEl = document.getElementById('random-count');
-            if (countEl && (countEl.innerText === "--" || countEl.innerText === "")) {
-                countEl.innerText = Math.floor(Math.random() * (17 - 9 + 1)) + 9;
-            }
-        }
-
-        document.getElementById('prevBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
-        document.getElementById('nextBtn').innerText = currentStep === totalSteps ? 'Vedi Valutazione' : 'Avanti';
-        window.scrollTo(0,0);
+function nextStep() {
+    if (currentStep === totalSteps) {
+        if (!document.getElementById('email').value) { alert("Inserisci i dati per la valutazione."); return; }
+        showLoadingAndResults();
+        return;
     }
-
-    function showLoadingAndResults() {
-        const main = document.querySelector('main');
-        main.innerHTML = `<div class="w-full max-w-xl text-center py-20"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-6"></div><h2 class="text-2xl font-bold mb-2">Analisi AI in corso...</h2><p id="loading-msg" class="text-gray-500">Confronto dati Trezzano...</p></div>`;
-        document.querySelector('.footer-nav').style.display = 'none';
-        const msgs = ["Confronto immobili simili...", "Calcolo algoritmi OMI...", "Generazione report finale..."];
-        let i = 0;
-        const interval = setInterval(() => {
-            if (i < msgs.length) { document.getElementById('loading-msg').innerText = msgs[i++]; } 
-            else { clearInterval(interval); main.innerHTML = `<div class="text-center py-20"><h2 class="text-3xl font-bold text-green-600">✓ Inviata!</h2><p class="mt-4 text-gray-600 text-lg">Riceverai il report via email a breve.</p></div>`; }
-        }, 1500);
-    }
-
+    currentStep++;
     updateUI();
+}
+
+function prevStep() { if (currentStep > 1) { currentStep--; updateUI(); } }
+
+function updateUI() {
+    // 1. Gestione visibilità degli step
+    document.querySelectorAll('.step').forEach(s => {
+        s.classList.remove('active');
+        if (parseInt(s.getAttribute('data-step')) === currentStep) s.classList.add('active');
+    });
+
+    // 2. Gestione Barra Indirizzo in alto
+    const addrBar = document.getElementById('address-bar');
+    if (currentStep > 1) {
+        addrBar.classList.remove('hidden');
+        document.getElementById('summary-text').innerText = document.getElementById('address-input').value;
+    } else { 
+        addrBar.classList.add('hidden'); 
+    }
+
+    // 3. FIX RANDOM COUNT E CITY (Ora allo Step 7)
+    if (currentStep === 7) {
+        const countEl = document.getElementById('random-count');
+        const cityEl = document.getElementById('city-placeholder');
+        
+        // Genera il numero casuale solo se non è già stato generato
+        if (countEl && (countEl.innerText === "--" || countEl.innerText === "")) {
+            countEl.innerText = Math.floor(Math.random() * 9) + 9;
+        }
+        
+        // Aggiorna il nome della città nel testo di riepilogo finale
+        if (cityEl) {
+            cityEl.innerText = citySelected;
+        }
+    }
+
+    // 4. Gestione pulsante Indietro
+    document.getElementById('prevBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+    
+    // 5. Scroll in alto automatico ad ogni cambio step
+    window.scrollTo(0,0);
+}
+
+function showLoadingAndResults() {
+    const main = document.querySelector('main');
+    main.innerHTML = `<div class="w-full max-w-xl text-center py-20"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mb-6"></div><h2 class="text-2xl font-bold mb-2">Analisi AI in corso...</h2><p id="loading-msg" class="text-gray-500">Recupero prezzi di mercato...</p></div>`;
+    document.querySelector('.footer-nav').style.display = 'none';
+    
+    const msgs = [
+        `Analisi del mercato a ${citySelected}...`, 
+        "Incrocio dati catastali...", 
+        "Generazione report finale..."
+    ];
+    
+    let i = 0;
+    const interval = setInterval(() => {
+        if (i < msgs.length) document.getElementById('loading-msg').innerText = msgs[i++];
+        else {
+            clearInterval(interval);
+            main.innerHTML = `<div class="text-center py-20"><h2 class="text-3xl font-bold text-blue-600 mb-4">Ottimo lavoro!</h2><p class="text-gray-600 text-lg">La valutazione per l'immobile a ${citySelected} è pronta.<br><br>Controlla la tua email per il report completo.</p></div>`;
+        }
+    }, 1500);
+}
+
+document.addEventListener('click', (e) => {
+    if (e.target !== addressInput && autocompleteList) autocompleteList.innerHTML = '';
+});
 </script>
 
 </body>
