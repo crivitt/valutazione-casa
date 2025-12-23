@@ -10,6 +10,23 @@
     
       gtag('config', 'AW-17824143507');
     </script>
+        
+        <!-- Google Ads Conversion Snippet -->
+    <script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-17824143507/nXTzCKbb_9UbEJOxm7NC',
+          'event_callback': callback
+      });
+      return false;
+    }
+    </script>
+        
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VendiCasa | Valutazione Professionale</title>
@@ -469,6 +486,9 @@ async function showLoadingAndResults() {
         });
 
         if (response.ok) {
+                // SCATTA LA CONVERSIONE DI GOOGLE ADS
+            gtag_report_conversion();
+                // Messaggio finale
             main.innerHTML = `<div class="text-center py-20">
                 <h2 class="text-3xl font-bold text-blue-600 mb-4">Ottimo lavoro!</h2>
                 <p class="text-gray-600 text-lg">La valutazione per l'immobile a ${citySelected} è stata inviata correttamente.<br><br>Ti contatteremo a breve per il report completo.</p>
@@ -486,4 +506,5 @@ document.addEventListener('click', (e) => {
 
 </body>
 </html>
+
 
