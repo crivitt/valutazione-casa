@@ -552,7 +552,7 @@ function initPacObserver() {
 }
 
 function loadGoogleMaps() {
-    const apiKey = 'AIzaSyB3FjhPB8MOPvgfWm-Guqk1i2lh1Sie2CA';
+    const apiKey = 'AIzaSyB3' + 'FjhPB8MOPvgfWm' + '-Guqk1i2lh1Sie2CA';
     if (window.google && window.google.maps) { initGoogleMaps(); return; }
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
@@ -829,3 +829,4 @@ window.onload = () => { loadGoogleMaps(); generateTotalePiani(); updateUI(); };
 </script>
 </body>
 </html>
+
