@@ -29,7 +29,7 @@
     </script>
         
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>vendiCASA.ai | Valutazione Professionale</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,6 +39,7 @@
             font-family: 'Inter', sans-serif; 
             background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.05), transparent 45%), #f8fafc; 
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
         .step { display: none; }
         .step.active { display: block; animation: fadeIn 0.4s ease-out; }
@@ -50,24 +51,60 @@
             text-align: left; 
             width: 100%; 
             padding: 1.15rem 1.25rem; 
-            border-radius: 1rem;
+            border-radius: 9999px;
             background: white; 
             font-weight: 500; 
             color: #475569; 
             position: relative;
         }
-        .option-btn:hover { border-color: #a78bfa; background-color: #f5f3ff; transform: translateY(-1px); }
+        .option-btn:hover { border-color: #a78bfa; background-color: #f5f3ff; }
         .option-btn.selected { border-color: #7c3aed; border-width: 2px; background-color: #f5f3ff; color: #5b21b6; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.1); }
         
         .footer-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-top: 1px solid rgba(226, 232, 240, 0.8); padding: 1.25rem; z-index: 100; }
         
-        input[type="number"], input[type="text"], input[type="email"], input[type="tel"] { 
-            width: 100%; padding: 1.15rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 1rem; outline: none; font-size: 1.05rem; background: white; transition: all 0.2s;
+        input[type="email"], input[type="tel"] { 
+            width: 100%; padding: 1.15rem 1.5rem; border: 1px solid #e2e8f0; border-radius: 9999px;
+            outline: none; font-size: 1.05rem; background: white; transition: all 0.2s;
         }
         input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1); }
         
-        .check-option { display: flex; justify-content: space-between; align-items: center; }
-        .check-mark { width: 22px; height: 22px; border: 2px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .floating-element {
+            transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+        }
+        .home-shadow {
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.15), 0 5px 15px -5px rgba(0, 0, 0, 0.08);
+        }
+        .floating-element.focused {
+            border-color: #c4b5fd;
+            box-shadow: 0 20px 45px -10px rgba(124, 58, 237, 0.2);
+        }
+        .floating-input {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            width: 100%;
+            height: 100%;
+            outline: none;
+            padding: 0 1.5rem !important;
+            font-weight: 400;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .check-option { display: flex; justify-content: space-between; align-items: center; border-radius: 9999px !important; }
+        .check-mark { width: 22px; height: 22px; border: 2px solid #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .selected .check-mark { background-color: #7c3aed; border-color: #7c3aed; }
         .selected .check-mark::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
         
@@ -75,58 +112,41 @@
             background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
             border-radius: 9999px;
             color: white;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 8px 20px -6px rgba(124, 58, 237, 0.4);
+            transition: box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px -8px rgba(124, 58, 237, 0.5);
+            box-shadow: 0 20px 40px -8px rgba(124, 58, 237, 0.4);
             background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
         }
 
         .main-card { background: white; border-radius: 2rem; box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); border: 1px solid rgba(226, 232, 240, 0.8); }
 
         .search-wrapper {
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            overflow: visible;
-        }
-        .search-wrapper.focused {
-            border-color: transparent;
-            transform: translateY(-2px);
-            box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+            padding: 0 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
         }
 
-        /* Stile suggerimenti Google Maps coerente */
+        .uniform-height {
+            height: 4rem; 
+        }
+
         .pac-container {
             border-radius: 1.25rem;
             margin-top: 12px;
             border: none !important;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
             font-family: 'Inter', sans-serif;
-            padding: 8px 0;
             z-index: 9999 !important;
         }
-        .pac-item {
-            padding: 14px 20px;
-            cursor: pointer;
-            border-top: none !important;
-            display: flex;
-            align-items: center;
-            transition: background 0.2s;
-        }
+        .pac-item { padding: 14px 20px; cursor: pointer; border-top: none !important; display: flex; align-items: center; }
         .pac-item:hover { background-color: #f8fafc; }
-        
-        .pac-item-query { 
-            font-size: 1rem; 
-            color: #1e293b !important; 
-            font-weight: 600; 
-            padding-right: 5px; 
-        }
-        .pac-matched { color: #1e293b !important; }
-        .pac-item > span:last-child { color: #64748b !important; }
-
+        .pac-item-query { font-size: 1rem; color: #1e293b !important; font-weight: 600; }
         .pac-icon { display: none; }
         .hdpi .pac-logo:after, .pac-logo:after { display: none !important; }
 
@@ -134,23 +154,86 @@
             border: none !important;
             box-shadow: none !important;
             background: transparent !important;
+            height: 100%;
+            padding: 0 !important;
+            color: #1e293b;
+        }
+
+        #civico-input-main-desktop {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            font-weight: 400 !important;
+            width: 80px !important;
+            text-align: right;
+            padding-right: 0.5rem !important;
         }
 
         #civico-input-container {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             max-width: 0;
             opacity: 0;
             overflow: hidden;
             display: flex;
             align-items: center;
-            z-index: 20;
             flex-shrink: 0;
+            height: 100%;
         }
+        
         #civico-input-container.visible {
-            max-width: 140px;
+            max-width: 100px;
             opacity: 1;
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
+        }
+        
+        @media (max-width: 640px) {
+            .search-wrapper {
+                padding: 0 1.5rem !important;
+                width: 100%;
+            }
+            .uniform-height {
+                height: 3.5rem; 
+            }
+            #google-search {
+                font-size: 1rem;
+            }
+            
+            .search-stack {
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+            
+            #civico-mobile-container {
+                width: 100%;
+            }
+
+            #civico-mobile-wrapper {
+                width: 100% !important;
+                padding: 0 1.5rem !important;
+            }
+
+            #civico-input-main-mobile {
+                width: 100% !important;
+                height: 100% !important;
+                background: transparent !important;
+                border: none !important;
+                outline: none !important;
+                box-shadow: none !important;
+                font-weight: 400 !important;
+                font-size: 1rem !important;
+                color: #1e293b;
+                padding: 0 !important;
+            }
+            
+            #civico-mobile-wrapper.focused {
+                border-color: #c4b5fd;
+                box-shadow: 0 20px 45px -10px rgba(124, 58, 237, 0.2);
+            }
+
+            #nextBtn-mobile-full {
+                width: 100%;
+                border-radius: 9999px !important;
+                height: 3.5rem;
+            }
         }
     </style>
 </head>
@@ -166,7 +249,7 @@
         <div class="max-w-2xl mx-auto px-6 flex items-start justify-center gap-3 text-sm">
             <span class="text-indigo-500 mt-0.5">📍</span>
             <div class="flex flex-col items-center text-center w-full">
-                <span id="summary-text" class="font-semibold text-gray-800 leading-tight block w-full px-2">Indirizzo...</span>
+                <span id="summary-text" class="font-semibold text-gray-800 leading-tight block w-full px-2 text-center">Indirizzo...</span>
                 <button onclick="currentStep=1; updateUI();" class="text-indigo-600 text-xs underline font-bold mt-1 hover:text-indigo-800">Modifica indirizzo</button>
             </div>
         </div>
@@ -176,7 +259,7 @@
         
         <!-- Homepage -->
         <div id="home-content" class="w-full max-w-4xl text-center">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight text-slate-900">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight text-slate-900 leading-[1.1]">
                 Vendi casa in un <span class="text-violet-600 italic">click.</span>
             </h1>
             <p class="text-lg md:text-xl text-slate-600 mb-12 max-w-2xl mx-auto">
@@ -184,25 +267,26 @@
             </p>
 
             <div class="max-w-3xl mx-auto w-full relative">
-                <div id="main-search-container" class="search-wrapper bg-white p-2 rounded-[2rem] flex flex-col md:flex-row items-center relative z-10">
-                    <!-- Indirizzo -->
-                    <div class="flex-grow relative w-full px-4 border-b md:border-b-0 md:border-r border-slate-100 min-w-0">
-                        <input type="text" id="google-search" placeholder="Inserisci l'indirizzo della tua casa..." class="w-full text-lg py-4 placeholder:text-slate-400 outline-none truncate">
+                <div class="flex flex-row items-stretch gap-3 md:gap-4 search-stack">
+                    <!-- Contenitore barra ricerca principale -->
+                    <div id="main-search-container" class="floating-element home-shadow search-wrapper uniform-height min-w-0" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                        <div class="flex-grow relative min-w-0 h-full flex items-center">
+                            <input type="text" id="google-search" placeholder="Indirizzo della tua casa..." class="w-full text-base md:text-lg placeholder:text-slate-400 outline-none truncate bg-transparent">
+                        </div>
+                        <div id="civico-input-container" class="hidden sm:flex">
+                            <input type="text" id="civico-input-main-desktop" placeholder="Civico" maxlength="6" class="outline-none placeholder:text-slate-400 text-slate-700">
+                        </div>
                     </div>
-                    
-                    <!-- Campo Civico -->
-                    <div id="civico-input-container" class="w-full md:w-auto">
-                        <input type="text" id="civico-input-main" placeholder="Civico" maxlength="6" class="!py-3 !px-3 !w-20 md:!w-24 text-center border border-slate-200 !rounded-xl text-lg font-semibold bg-slate-50 focus:bg-white focus:border-indigo-400">
+                    <div id="civico-mobile-container" class="hidden sm:hidden w-full transition-all duration-300">
+                         <div class="floating-element home-shadow uniform-height flex items-center px-0" id="civico-mobile-wrapper">
+                            <input type="text" id="civico-input-main-mobile" placeholder="Inserisci il numero civico..." maxlength="10" class="w-full bg-transparent border-none px-6 outline-none">
+                         </div>
                     </div>
-
-                    <!-- Tasto Valuta -->
-                    <div class="w-full md:w-auto p-1 md:p-0 flex-shrink-0">
-                        <button onclick="startValuationFlow()" class="btn-gradient px-10 py-4 font-bold text-lg w-full md:w-auto md:min-w-[180px]">
-                            Valuta ora
-                        </button>
-                    </div>
+                    <button id="nextBtn-mobile-full" onclick="startValuationFlow()" class="btn-gradient uniform-height flex-shrink-0 px-8 md:px-12 font-bold text-base md:text-xl whitespace-nowrap">
+                        Valuta
+                    </button>
                 </div>
-                <p id="civico-hint" class="text-xs text-amber-600 font-medium mt-3 hidden animate-fadeIn">Per favore, completa l'indirizzo inserendo il numero civico.</p>
+                <p id="civico-hint" class="text-xs text-amber-600 font-medium mt-4 hidden animate-fadeIn text-center">Per favore, inserisci il numero civico per una stima precisa.</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8 mt-20 max-w-5xl mx-auto px-4 text-left">
@@ -219,12 +303,11 @@
                 <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
                     <div class="text-3xl mb-4">🛡️</div>
                     <h3 class="font-bold text-slate-900 mb-2">Privacy Totale</h3>
-                    <p class="text-sm text-slate-500">I tuoi dati sono al sicuro e non verranno ceduti a call center.</p>
+                    <p class="text-sm text-slate-500">I tuoi dati sono protetti e non verranno mai ceduti senza il tuo consenso.</p>
                 </div>
             </div>
-            
              <footer class="py-12 mt-12 text-center text-slate-400 text-sm border-t border-slate-200">
-                <p>© 2025 vendiCASA.ai • <a href="#" class="underline hover:text-violet-600">Informativa Privacy</a></p>
+                <p>© 2025 vendiCASA.ai • <a href="#" class="underline hover:text-violet-600">Privacy Policy</a></p>
             </footer>
         </div>
 
@@ -232,48 +315,53 @@
         <div id="form-container" class="w-full max-w-xl hidden">
             <div class="main-card p-6 md:p-10 bg-white">
                 <form id="valuationForm">
-                    <!-- Step 1: Modifica Indirizzo manuale con Suggerimenti Google -->
+                    <!-- STEP 1 -->
                     <div class="step" data-step="1">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-slate-900">Modifica Indirizzo</h1>
-                        <div class="space-y-4">
+                        <div class="space-y-5">
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <div class="flex-grow">
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest text-left ml-4">Via/Piazza</label>
+                                    <div class="floating-element uniform-height" id="manual-search-container" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                        <input type="text" id="manual-route" placeholder="Cerca indirizzo..." class="floating-input">
+                                    </div>
+                                </div>
+                                <div class="w-full sm:w-24">
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest text-left ml-4">Civico</label>
+                                    <div class="floating-element uniform-height" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                        <input type="text" id="manual-civico" placeholder="es. 10" class="floating-input !px-0 text-center">
+                                    </div>
+                                </div>
+                            </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest">Via/Piazza</label>
-                                <input type="text" id="manual-route" placeholder="Cerca indirizzo...">
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
-                                <div class="col-span-1">
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest">Civico</label>
-                                    <input type="text" id="manual-civico" placeholder="es. 10" class="text-center">
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest">Comune</label>
-                                    <input type="text" id="manual-city" placeholder="es. Milano">
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-widest text-left ml-4">Comune</label>
+                                <div class="floating-element uniform-height" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                    <input type="text" id="manual-city" placeholder="es. Milano" class="floating-input">
                                 </div>
                             </div>
-                            <button type="button" onclick="confirmManualAddress()" class="btn-gradient w-full py-4 font-bold text-lg mt-4">Conferma e prosegui</button>
                         </div>
                     </div>
 
-                    <!-- Step 2: Tipologia immobile -->
                     <div class="step" data-step="2">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-slate-900">Tipologia immobile</h1>
                         <div class="space-y-3">
-                            <button type="button" onclick="handleSelection(this, 'appartamento')" class="option-btn">Appartamento</button>
-                            <button type="button" onclick="handleSelection(this, 'loft')" class="option-btn">Loft</button>
-                            <button type="button" onclick="handleSelection(this, 'attico')" class="option-btn">Attico</button>
-                            <button type="button" onclick="handleSelection(this, 'mansarda')" class="option-btn">Mansarda</button>
-                            <button type="button" onclick="handleSelection(this, 'villetta-schiera')" class="option-btn">Villetta a schiera</button>
-                            <button type="button" onclick="handleSelection(this, 'villa-indipendente')" class="option-btn">Villa indipendente</button>
+                            <button type="button" onclick="handleSelection(this, 'appartamento')" class="option-btn text-center">Appartamento</button>
+                            <button type="button" onclick="handleSelection(this, 'loft')" class="option-btn text-center">Loft</button>
+                            <button type="button" onclick="handleSelection(this, 'attico')" class="option-btn text-center">Attico</button>
+                            <button type="button" onclick="handleSelection(this, 'mansarda')" class="option-btn text-center">Mansarda</button>
+                            <button type="button" onclick="handleSelection(this, 'villetta-schiera')" class="option-btn text-center">Villetta a schiera</button>
+                            <button type="button" onclick="handleSelection(this, 'villa-indipendente')" class="option-btn text-center">Villa indipendente</button>
                         </div>
                     </div>
 
-                    <!-- Step 3: Dimensioni -->
                     <div class="step" data-step="3">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-slate-900">Dimensioni</h1>
                         <div class="space-y-8">
                             <div>
                                 <label class="block text-xs font-bold text-slate-400 uppercase mb-3 text-center tracking-widest">Superficie (MQ)</label>
-                                <input type="number" id="mq" placeholder="es. 95" class="text-center font-bold text-2xl">
+                                <div class="floating-element uniform-height max-w-[140px] mx-auto" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                    <input type="number" id="mq" placeholder="50" min="20" max="600" onblur="validateMq(this)" class="floating-input text-center text-xl !px-0">
+                                </div>
                             </div>
                             <div id="locali-group">
                                 <label class="block text-xs font-bold text-slate-400 uppercase mb-3 text-center tracking-widest">Locali</label>
@@ -288,17 +376,18 @@
                             </div>
                             <div id="bagni-group">
                                 <label class="block text-xs font-bold text-slate-400 uppercase mb-3 text-center tracking-widest">Bagni</label>
-                                <div class="grid grid-cols-4 gap-2">
+                                <div class="grid grid-cols-6 gap-2">
+                                    <div class="col-span-1"></div>
                                     <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm">1</button>
                                     <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm">2</button>
                                     <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm">3</button>
-                                    <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm">4+</button>
+                                    <button type="button" onclick="selectGrid(this)" class="option-btn !p-3 text-center !text-sm">4</button>
+                                    <div class="col-span-1"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 4: Dettagli edificio -->
                     <div class="step" data-step="4">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-slate-900">Dettagli edificio</h1>
                         <div class="space-y-8">
@@ -313,7 +402,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 5: Condizioni -->
                     <div class="step" data-step="5">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-slate-900">Condizioni</h1>
                         <div class="mb-8" id="stato-group">
@@ -343,7 +431,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 6: Dettagli aggiuntivi -->
                     <div class="step" data-step="6">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-slate-900">Dettagli aggiuntivi</h1>
                         <div class="space-y-8">
@@ -367,23 +454,26 @@
                         </div>
                     </div>
 
-                    <!-- Step 7: Ci siamo quasi -->
                     <div class="step" data-step="7">
                         <h1 class="text-2xl md:text-3xl font-extrabold text-center mb-2 text-slate-900">Ci siamo quasi!</h1>
                         <div class="flex items-center gap-4 p-5 bg-indigo-50/50 rounded-2xl mb-8 border border-indigo-100">
                             <div class="text-3xl">📊</div>
-                            <div class="text-xs text-indigo-900 font-medium leading-relaxed">
+                            <div class="text-xs text-indigo-900 font-medium leading-relaxed text-left">
                                 <strong>Analisi completata!</strong> Abbiamo incrociato i dati con <strong id="random-count">--</strong> immobili simili a <span id="city-placeholder" class="font-bold underline">tua zona</span>.
                             </div>
                         </div>
-                        
                         <div class="space-y-4">
-                            <input type="text" id="nome" placeholder="Nome e Cognome">
-                            <input type="email" id="email" placeholder="Email">
-                            <input type="tel" id="telefono" placeholder="Telefono">
-                            
-                            <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                <input type="checkbox" id="privacy" class="mt-1 w-5 h-5 accent-indigo-600 cursor-pointer shrink-0">
+                            <div class="floating-element uniform-height" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                <input type="text" id="nome" placeholder="Nome e Cognome" class="floating-input">
+                            </div>
+                            <div class="floating-element uniform-height" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                <input type="email" id="email" placeholder="Email" class="floating-input">
+                            </div>
+                            <div class="floating-element uniform-height" onfocusin="this.classList.add('focused')" onfocusout="this.classList.remove('focused')">
+                                <input type="tel" id="telefono" placeholder="Telefono" class="floating-input">
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-3xl border border-slate-100">
+                                <input type="checkbox" id="privacy" class="mt-1 x-5 h-5 accent-indigo-600 cursor-pointer shrink-0">
                                 <label for="privacy" class="text-xs text-slate-500 leading-relaxed">
                                     Accetto la <a href="#" target="_blank" class="text-indigo-600 font-bold hover:underline">Privacy Policy</a> e acconsento al trattamento dei dati.
                                 </label>
@@ -399,11 +489,10 @@
                     <button id="prevBtn" onclick="prevStep()" class="px-8 py-4 font-semibold text-slate-500 hover:text-indigo-600 transition-all text-lg flex items-center gap-2 group">
                         <span class="group-hover:-translate-x-1 transition-transform">←</span> Indietro
                     </button>
-                    <button id="nextBtn" onclick="nextStep()" class="btn-gradient px-12 py-4 font-bold text-lg shadow-lg">Avanti</button>
+                    <button id="nextBtn" onclick="nextStep()" class="btn-gradient px-8 py-4 font-bold text-lg">Avanti</button>
                 </div>
             </div>
         </div>
-
     </main>
 
 <script>
@@ -412,22 +501,58 @@ const totalSteps = 7;
 let selectedTipo = "";
 let citySelected = "tua zona";
 let selectedAddress = "";
-let originalRoute = ""; // Via pulita (senza civico)
-let googleStreetNumber = ""; // Civico se fornito da Google
 let hasCivico = false;
-let fullAddressSet = false; // Flag per sapere se l'indirizzo è già completo
+let cachedRandomCount = null;
 
+// Riferimenti DOM
 const searchInput = document.getElementById('google-search');
-const searchWrapper = document.getElementById('main-search-container');
-const civicoContainer = document.getElementById('civico-input-container');
+const mainSearchWrapper = document.getElementById('main-search-container');
+const manualSearchWrapper = document.getElementById('manual-search-container');
+const civicoContainerDesktop = document.getElementById('civico-input-container');
+const civicoContainerMobile = document.getElementById('civico-mobile-container');
+const civicoInputDesktop = document.getElementById('civico-input-main-desktop');
+const civicoInputMobile = document.getElementById('civico-input-main-mobile');
 const civicoHint = document.getElementById('civico-hint');
-const civicoMainInput = document.getElementById('civico-input-main');
 
-searchInput.addEventListener('focus', () => searchWrapper.classList.add('focused'));
-searchInput.addEventListener('blur', () => searchWrapper.classList.remove('focused'));
+// Inizializza le variabili
+const searchInputVal = searchInput ? searchInput.value : '';
+let searchWrapper = mainSearchWrapper;
+
+if (searchInput) {
+    searchInput.addEventListener('focus', () => {
+        if(searchWrapper) searchWrapper.classList.add('focused');
+    });
+    searchInput.addEventListener('blur', () => {
+        if(searchWrapper) searchWrapper.classList.remove('focused');
+    });
+}
+
+if (civicoInputMobile) {
+    const mobileWrapper = document.getElementById('civico-mobile-wrapper');
+    civicoInputMobile.addEventListener('focus', () => { if(mobileWrapper) mobileWrapper.classList.add('focused'); });
+    civicoInputMobile.addEventListener('blur', () => { if(mobileWrapper) mobileWrapper.classList.remove('focused'); });
+}
+
+function initPacObserver() {
+    const observer = new MutationObserver((mutations) => {
+        const pac = document.querySelector('.pac-container');
+        if (pac) {
+            const activeInput = document.activeElement;
+            let targetWrapper = mainSearchWrapper;
+            if (activeInput && activeInput.id === 'manual-route') targetWrapper = document.getElementById('manual-search-container');
+            
+            if (targetWrapper) {
+                const rect = targetWrapper.getBoundingClientRect();
+                pac.style.width = rect.width + 'px';
+                pac.style.left = rect.left + 'px';
+            }
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: false });
+}
 
 function loadGoogleMaps() {
-    const apiKey = 'AIzaSyB3' + 'FjhPB8MOPvgfWm' + '-Guqk1i2lh1Sie2CA';
+    const apiKey = 'AIzaSyB3FjhPB8MOPvgfWm-Guqk1i2lh1Sie2CA';
     if (window.google && window.google.maps) { initGoogleMaps(); return; }
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
@@ -439,63 +564,53 @@ function loadGoogleMaps() {
 function initGoogleMaps() {
     const mainInput = document.getElementById('google-search');
     const manualInput = document.getElementById('manual-route');
-    if (!mainInput || !window.google || !window.google.maps || !window.google.maps.places) return;
-
-    const options = {
-        componentRestrictions: { country: "it" },
-        fields: ["address_components", "formatted_address"],
-        types: ["address"],
-    };
-
-    // Inizializzazione Autocomplete Homepage
-    const autocompleteMain = new google.maps.places.Autocomplete(mainInput, options);
-    setupAutocompleteListener(autocompleteMain, false);
-
-    // Inizializzazione Autocomplete Step 1 (Modifica)
-    const autocompleteManual = new google.maps.places.Autocomplete(manualInput, options);
-    setupAutocompleteListener(autocompleteManual, true);
+    
+    if (window.google && window.google.maps && window.google.maps.places) {
+        const options = { componentRestrictions: { country: "it" }, fields: ["address_components", "formatted_address"], types: ["address"] };
+        
+        if (mainInput) {
+            const autocompleteMain = new google.maps.places.Autocomplete(mainInput, options);
+            setupAutocompleteListener(autocompleteMain, false);
+        }
+        
+        if (manualInput) {
+            const autocompleteManual = new google.maps.places.Autocomplete(manualInput, options);
+            setupAutocompleteListener(autocompleteManual, true);
+        }
+        
+        initPacObserver();
+    }
 }
 
 function setupAutocompleteListener(autocomplete, isManualStep) {
     autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
         if (!place || !place.address_components) return;
-
-        let city = "", province = "", postcode = "", route = "", streetNumber = "";
-        
+        let city = "", route = "", streetNumber = "";
         for (const component of place.address_components) {
-            const componentType = component.types[0];
-            switch (componentType) {
-                case "street_number": streetNumber = component.long_name; break;
-                case "route": route = component.long_name; break;
-                case "locality": city = component.long_name; break;
-                case "administrative_area_level_2": province = component.short_name; break;
-                case "postal_code": postcode = component.long_name; break;
-            }
+            const type = component.types[0];
+            if (type === "street_number") streetNumber = component.long_name;
+            else if (type === "route") route = component.long_name;
+            else if (type === "locality") city = component.long_name;
         }
-
         citySelected = city || "tua zona";
-        originalRoute = route;
-        googleStreetNumber = streetNumber;
         hasCivico = !!streetNumber;
-
-        // Sincronizziamo i valori
-        selectedAddress = `${route}${streetNumber ? ' ' + streetNumber : ''}, ${city} ${postcode} (${province})`;
+        selectedAddress = place.formatted_address;
         
-        document.getElementById('manual-route').value = route;
-        document.getElementById('manual-civico').value = streetNumber;
-        document.getElementById('manual-city').value = city;
-
-        if (isManualStep) {
-            // Se siamo già nello step 1, restiamo lì finché non premono conferma
-        } else {
-            // Se siamo in home, gestiamo il flow automatico
-            if (!hasCivico) {
-                showCivicoField();
-            } else {
+        const manRoute = document.getElementById('manual-route');
+        const manCivico = document.getElementById('manual-civico');
+        const manCity = document.getElementById('manual-city');
+        
+        if (manRoute) manRoute.value = route;
+        if (manCivico) manCivico.value = streetNumber;
+        if (manCity) manCity.value = city;
+        
+        if (!isManualStep) {
+            if (!hasCivico) showCivicoField();
+            else {
                 hideCivicoField();
-                fullAddressSet = true;
-                civicoMainInput.value = googleStreetNumber;
+                if(civicoInputDesktop) civicoInputDesktop.value = streetNumber; 
+                if(civicoInputMobile) civicoInputMobile.value = streetNumber;
                 setTimeout(() => startValuationFlow(), 300);
             }
         }
@@ -503,67 +618,37 @@ function setupAutocompleteListener(autocomplete, isManualStep) {
 }
 
 function showCivicoField() {
-    civicoContainer.classList.add('visible');
-    civicoHint.classList.remove('hidden');
-    civicoMainInput.focus();
+    if (window.innerWidth <= 640) { 
+        if(civicoContainerMobile) civicoContainerMobile.classList.remove('hidden'); 
+        if(civicoInputMobile) civicoInputMobile.focus(); 
+    }
+    else { 
+        if(civicoContainerDesktop) {
+            civicoContainerDesktop.classList.remove('hidden'); 
+            civicoContainerDesktop.classList.add('visible'); 
+        }
+        if(civicoInputDesktop) civicoInputDesktop.focus(); 
+    }
+    if(civicoHint) civicoHint.classList.remove('hidden');
 }
 
 function hideCivicoField() {
-    civicoContainer.classList.remove('visible');
-    civicoHint.classList.add('hidden');
-}
-
-function confirmManualAddress() {
-    const route = document.getElementById('manual-route').value;
-    const civico = document.getElementById('manual-civico').value;
-    const city = document.getElementById('manual-city').value;
-    
-    if (!route || !city) return;
-    
-    selectedAddress = `${route}${civico ? ' ' + civico : ''}, ${city}`;
-    citySelected = city;
-    document.getElementById('summary-text').innerText = selectedAddress;
-    
-    currentStep = 2;
-    updateUI();
+    if(civicoContainerDesktop) {
+        civicoContainerDesktop.classList.remove('visible'); 
+        civicoContainerDesktop.classList.add('hidden');
+    }
+    if(civicoContainerMobile) civicoContainerMobile.classList.add('hidden'); 
+    if(civicoHint) civicoHint.classList.add('hidden');
 }
 
 function startValuationFlow() {
-    const inputVal = searchInput.value;
-    const civicoVal = civicoMainInput.value.trim();
-    
-    if (civicoVal.length > 6) {
-        civicoMainInput.classList.add('border-red-400');
-        return;
-    }
-
-    if (!selectedAddress && inputVal.length > 5) {
-        selectedAddress = inputVal;
-    } else if (!selectedAddress) {
-        return;
-    }
-
-    const addressPart = selectedAddress.split(',')[0];
-    const hasNumberInAddress = /\d/.test(addressPart);
-    
-    if (!hasNumberInAddress && !civicoVal) {
-        showCivicoField();
-        civicoMainInput.classList.add('border-amber-400');
-        return;
-    }
-
-    if (civicoVal && !hasNumberInAddress) {
-        const parts = selectedAddress.split(',');
-        selectedAddress = originalRoute + ' ' + civicoVal + ',' + (parts[1] || citySelected);
-        searchInput.value = originalRoute + ' ' + civicoVal;
-        fullAddressSet = true;
-    }
-    
+    const inputVal = searchInput ? searchInput.value.trim() : '';
+    if (inputVal.length < 5) { if(searchInput) searchInput.focus(); return; }
     document.getElementById('home-content').classList.add('hidden');
     document.getElementById('form-container').classList.remove('hidden');
     document.getElementById('address-bar').classList.remove('hidden');
-    document.getElementById('summary-text').innerText = selectedAddress;
-    currentStep = 2;
+    document.getElementById('summary-text').innerText = selectedAddress || inputVal;
+    currentStep = (citySelected === "tua zona") ? 1 : 2;
     updateUI();
 }
 
@@ -571,12 +656,6 @@ function resetToHome() {
     document.getElementById('home-content').classList.remove('hidden');
     document.getElementById('form-container').classList.add('hidden');
     document.getElementById('address-bar').classList.add('hidden');
-    
-    if (fullAddressSet || /\d/.test(searchInput.value)) {
-        searchInput.value = originalRoute;
-        showCivicoField();
-    }
-    
     currentStep = 1;
 }
 
@@ -590,6 +669,12 @@ function handleSelection(btn, value) {
         else asc.classList.remove('hidden');
     }
     setTimeout(() => { nextStep(); }, 350);
+}
+
+function validateMq(input) {
+    if (input.value === "") return;
+    const val = parseFloat(input.value);
+    if (val < 20) input.value = 20; else if (val > 600) input.value = 600;
 }
 
 function selectGrid(btn) {
@@ -608,11 +693,9 @@ function toggleMultiple(btn) { btn.classList.toggle('selected'); }
 
 function generateTotalePiani() {
     const container = document.getElementById('totale-piani-container');
-    if (!container) return;
-    container.innerHTML = '';
+    if (!container) return; container.innerHTML = '';
     for (let i = 1; i <= 10; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
+        const btn = document.createElement('button'); btn.type = 'button';
         btn.className = 'option-btn !p-3 text-center !text-sm';
         btn.innerText = i === 10 ? '10+' : i;
         btn.onclick = () => handleTotalePiani(i, btn);
@@ -630,27 +713,69 @@ function handleTotalePiani(num, btn) {
 }
 
 function generatePianoSingolo(max) {
-    const container = document.getElementById('piano-singolo-container');
-    container.innerHTML = '';
+    const container = document.getElementById('piano-singolo-container'); container.innerHTML = '';
     const limit = max === 10 ? 10 : max;
     for (let i = 0; i <= limit; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
+        const btn = document.createElement('button'); btn.type = 'button';
         btn.className = 'option-btn !p-3 text-center !text-sm';
         btn.innerText = i === 0 ? 'T' : (i === 10 ? '10+' : i);
         btn.onclick = () => {
             container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            setTimeout(() => nextStep(), 350);
+            btn.classList.add('selected'); setTimeout(() => nextStep(), 350);
         };
         container.appendChild(btn);
     }
 }
 
+function validateStep(step) {
+    if (step === 1) {
+        const route = document.getElementById('manual-route').value;
+        const city = document.getElementById('manual-city').value;
+        if (!route || !city) return false;
+        // Aggiorna l'indirizzo con i dati manuali se necessario
+        selectedAddress = `${route}${document.getElementById('manual-civico').value ? ' ' + document.getElementById('manual-civico').value : ''}, ${city}`;
+        document.getElementById('summary-text').innerText = selectedAddress;
+        return true;
+    }
+    if (step === 2 && !selectedTipo) return false;
+    if (step === 3) {
+        const mq = document.getElementById('mq').value;
+        const locali = document.querySelector('#locali-group .selected');
+        const bagni = document.querySelector('#bagni-group .selected');
+        if (!mq || !locali || !bagni) return false;
+    }
+    if (step === 4) {
+        const piani = document.querySelector('#totale-piani-container .selected');
+        const pianoSpec = document.querySelector('#piano-singolo-container .selected');
+        const pianoBox = document.getElementById('piano-specifico-box');
+        if (!piani) return false;
+        if (!pianoBox.classList.contains('hidden') && !pianoSpec) return false;
+    }
+    if (step === 5) {
+        const stato = document.querySelector('#stato-group .selected');
+        const classe = document.querySelector('#classe-group .selected');
+        if (!stato || !classe) return false;
+    }
+    if (step === 6) {
+        const ascBox = document.getElementById('ascensore-box');
+        if (!ascBox.classList.contains('hidden')) {
+            if (!ascBox.querySelector('.selected')) return false;
+        }
+    }
+    if (step === 7) {
+        const n = document.getElementById('nome').value, e = document.getElementById('email').value, t = document.getElementById('telefono').value, p = document.getElementById('privacy').checked;
+        if (!n || !e || !t || !p) return false;
+    }
+    return true;
+}
+
 function nextStep() {
+    if (!validateStep(currentStep)) {
+        alert("Per favore, compila tutti i campi obbligatori per proseguire.");
+        return;
+    }
+
     if (currentStep === totalSteps) {
-        const n = document.getElementById('nome').value, e = document.getElementById('email').value, p = document.getElementById('privacy').checked;
-        if (!n || !e || !p) { return; }
         submitFinalForm();
         return;
     }
@@ -664,18 +789,14 @@ function updateUI() {
         s.classList.remove('active');
         if (parseInt(s.getAttribute('data-step')) === currentStep) s.classList.add('active');
     });
-    
     const nextBtn = document.getElementById('nextBtn');
-    if (currentStep === 1) nextBtn.classList.add('hidden');
-    else nextBtn.classList.remove('hidden');
-
+    if (currentStep === 1) nextBtn.classList.add('hidden'); else nextBtn.classList.remove('hidden');
     if (currentStep === 7) {
-        document.getElementById('random-count').innerText = Math.floor(Math.random() * 9) + 9;
+        if (cachedRandomCount === null) cachedRandomCount = Math.floor(Math.random() * 9) + 9;
+        document.getElementById('random-count').innerText = cachedRandomCount;
         document.getElementById('city-placeholder').innerText = citySelected;
-        nextBtn.innerText = "Ottieni Valutazione";
-    } else if (currentStep !== 1) {
-        nextBtn.innerText = "Avanti";
-    }
+        nextBtn.innerText = "Scopri la valutazione";
+    } else { nextBtn.innerText = "Avanti"; }
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -689,8 +810,7 @@ async function submitFinalForm() {
         telefono: document.getElementById('telefono').value,
         timestamp: new Date().toLocaleString("it-IT")
     };
-    const main = document.querySelector('main');
-    const nav = document.getElementById('nav-wrapper');
+    const main = document.querySelector('main'), nav = document.getElementById('nav-wrapper');
     if (nav) nav.classList.add('hidden');
     main.innerHTML = `<div class="w-full max-w-xl text-center py-20"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mb-6"></div><h2 class="text-2xl font-bold mb-2 text-slate-900">Analisi in corso...</h2></div>`;
     try {
@@ -707,6 +827,5 @@ async function submitFinalForm() {
 
 window.onload = () => { loadGoogleMaps(); generateTotalePiani(); updateUI(); };
 </script>
-
 </body>
 </html>
