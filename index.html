@@ -37,13 +37,13 @@
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.05), transparent 45%), #fcfcfd; 
+            /* Gradiente aggiornato come richiesto */
+            background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.05), transparent 45%), #f8fafc; 
             scroll-behavior: smooth;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Texture Carta Martellata visibile */
         body::before {
             content: "";
             position: fixed;
@@ -53,7 +53,7 @@
             height: 100%;
             pointer-events: none;
             z-index: -1;
-            opacity: 0.1; /* Aumentato per visibilità */
+            opacity: 0.1; 
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
             mix-blend-mode: multiply;
         }
@@ -67,7 +67,7 @@
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
         }
-        .error-shake { animation: shake 0.3s ease-in-out; }
+        .error-shake { animation: shake 0.3s ease-in-out !important; border-color: #ef4444 !important; }
 
         .option-btn { 
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -208,7 +208,6 @@
             opacity: 1;
         }
 
-        /* Styles per caricamento stima */
         .ai-pulse {
             animation: ai-pulse 2s infinite;
         }
@@ -339,7 +338,7 @@
                 </div>
             </div>
              <footer class="py-12 mt-12 text-center text-slate-400 text-sm border-t border-slate-200">
-                <p>© 2025 vendiCASA.ai • <a href="/privacy" class="underline hover:text-violet-600">Privacy Policy</a></p>
+                <p>© 2025 vendiCASA.ai • <a href="#" class="underline hover:text-violet-600">Privacy Policy</a></p>
             </footer>
         </div>
 
@@ -502,17 +501,23 @@
                         </div>
                         <div class="space-y-4">
                             <div class="floating-element uniform-height" id="nome-container">
-                                <input type="text" id="nome" placeholder="Nome e Cognome" class="floating-input">
+                                <input type="text" id="nome" placeholder="Nome e Cognome" class="floating-input" oninput="this.parentElement.classList.remove('error-shake')">
                             </div>
-                            <div class="floating-element uniform-height" id="email-container">
-                                <input type="email" id="email" placeholder="Email" class="floating-input">
+                            <div class="flex flex-col gap-1">
+                                <div class="floating-element uniform-height" id="email-container">
+                                    <input type="email" id="email" placeholder="Email" class="floating-input" oninput="handleEmailInput(this)">
+                                </div>
+                                <p id="email-error-msg" class="text-[11px] text-red-500 font-bold ml-6 mt-1 hidden text-left">Inserisci un indirizzo e-mail valido</p>
                             </div>
-                            <div class="floating-element uniform-height" id="telefono-container">
-                                <input type="tel" id="telefono" placeholder="Telefono" class="floating-input">
+                            <div class="flex flex-col gap-1">
+                                <div class="floating-element uniform-height" id="telefono-container">
+                                    <input type="tel" id="telefono" placeholder="Cellulare" maxlength="10" class="floating-input" oninput="handlePhoneInput(this)">
+                                </div>
+                                <p id="phone-error-msg" class="text-[11px] text-red-500 font-bold ml-6 mt-1 hidden text-left">Inserisci un numero di cellulare valido</p>
                             </div>
-                            <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-3xl border border-slate-100" id="privacy-container">
-                                <input type="checkbox" id="privacy" class="mt-1 w-5 h-5 accent-indigo-600 cursor-pointer shrink-0">
-                                <label for="privacy" class="text-xs text-slate-500 leading-relaxed">
+                            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-3xl border border-slate-100" id="privacy-container">
+                                <input type="checkbox" id="privacy" class="w-5 h-5 accent-indigo-600 cursor-pointer shrink-0" onchange="this.parentElement.classList.remove('error-shake')">
+                                <label for="privacy" class="text-xs text-slate-500 leading-relaxed text-left">
                                     Accetto la <a href="#" target="_blank" class="text-indigo-600 font-bold hover:underline">Privacy Policy</a> e acconsento al trattamento dei dati.
                                 </label>
                             </div>
@@ -539,6 +544,7 @@ const totalSteps = 7;
 let selectedTipo = "";
 let citySelected = "tua zona";
 let selectedAddress = "";
+let addressComponents = { route: "", streetNumber: "", city: "" };
 let hasCivico = false;
 let cachedRandomCount = null;
 
@@ -573,16 +579,19 @@ function setupAutocompleteListener(autocomplete, isManualStep) {
     autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
         if (!place || !place.address_components) return;
+        
         let city = "", route = "", streetNumber = "";
-        for (const component of place.address_components) {
+        place.address_components.forEach(component => {
             const type = component.types[0];
             if (type === "street_number") streetNumber = component.long_name;
             else if (type === "route") route = component.long_name;
             else if (type === "locality") city = component.long_name;
-        }
+        });
+
         citySelected = city || "tua zona";
         selectedAddress = place.formatted_address;
         hasCivico = !!streetNumber;
+        addressComponents = { route, streetNumber, city };
 
         if (isManualStep) {
             document.getElementById('manual-route').value = route;
@@ -610,19 +619,37 @@ function showCivicoField() {
 }
 
 function startValuationFlow() {
-    const inputVal = searchInput ? searchInput.value.trim() : '';
-    if (!selectedAddress && inputVal.length < 5) return;
+    const manualCiv = (window.innerWidth <= 640) ? civicoInputMobile.value.trim() : civicoInputDesktop.value.trim();
     
+    if (!hasCivico && !manualCiv) {
+        const target = (window.innerWidth <= 640) ? civicoInputMobile : civicoInputDesktop;
+        const container = (window.innerWidth <= 640) ? document.getElementById('civico-mobile-wrapper') : document.getElementById('civico-input-container');
+        
+        if (container) {
+            container.classList.add('error-shake');
+            setTimeout(() => container.classList.remove('error-shake'), 400);
+        }
+        target.focus();
+        return;
+    }
+
+    if (manualCiv) {
+        addressComponents.streetNumber = manualCiv;
+        if (selectedAddress && !selectedAddress.includes(manualCiv)) {
+             selectedAddress = selectedAddress.replace(addressComponents.route, addressComponents.route + " " + manualCiv);
+        }
+    }
+
+    document.getElementById('manual-route').value = addressComponents.route;
+    document.getElementById('manual-civico').value = addressComponents.streetNumber;
+    document.getElementById('manual-city').value = addressComponents.city;
+
     document.getElementById('home-content').classList.add('hidden');
     document.getElementById('form-container').classList.remove('hidden');
     document.getElementById('address-bar').classList.remove('hidden');
     
-    const manualCiv = (window.innerWidth <= 640) ? civicoInputMobile.value : civicoInputDesktop.value;
-    if (manualCiv && !selectedAddress.includes(manualCiv)) {
-        selectedAddress += " " + manualCiv;
-    }
-
-    document.getElementById('summary-text').innerText = selectedAddress || inputVal;
+    document.getElementById('summary-text').innerText = selectedAddress || (addressComponents.route + " " + addressComponents.streetNumber + ", " + addressComponents.city);
+    
     currentStep = (citySelected === "tua zona") ? 1 : 2;
     updateUI();
 }
@@ -644,20 +671,17 @@ function selectGrid(btn) {
     btn.classList.add('selected');
     
     const stepEl = btn.closest('.step');
-    const grids = stepEl.querySelectorAll('.grid');
     const selections = stepEl.querySelectorAll('.grid .selected');
 
-    if (currentStep === 3) {
-        if (selections.length === 2) setTimeout(() => nextStep(), 350);
-    } else if (currentStep === 5) {
-        if (selections.length === 2) setTimeout(() => nextStep(), 350);
-    }
+    if (currentStep === 3 && selections.length === 2) setTimeout(() => nextStep(), 350);
+    else if (currentStep === 5 && selections.length === 2) setTimeout(() => nextStep(), 350);
 }
 
 function toggleMultiple(btn) { btn.classList.toggle('selected'); }
 
 function generateTotalePiani() {
     const container = document.getElementById('totale-piani-container');
+    if (!container) return;
     container.innerHTML = '';
     for (let i = 1; i <= 10; i++) {
         const btn = document.createElement('button'); btn.type = 'button';
@@ -696,23 +720,52 @@ function updateUI() {
         s.classList.remove('active');
         if (parseInt(s.getAttribute('data-step')) === currentStep) s.classList.add('active');
     });
+    
     const nextBtn = document.getElementById('nextBtn');
-    if (currentStep === 1) nextBtn.classList.add('hidden'); else nextBtn.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+    
+    if (currentStep === 1) {
+        document.getElementById('manual-route').value = addressComponents.route;
+        document.getElementById('manual-civico').value = addressComponents.streetNumber;
+        document.getElementById('manual-city').value = addressComponents.city;
+    }
+
     if (currentStep === 7) {
         if (!cachedRandomCount) cachedRandomCount = Math.floor(Math.random() * 12) + 8;
         document.getElementById('random-count').innerText = cachedRandomCount;
         document.getElementById('city-placeholder').innerText = citySelected;
         nextBtn.innerText = "Ottieni Valutazione";
-    } else { nextBtn.innerText = "Avanti"; }
+    } else { 
+        nextBtn.innerText = "Avanti"; 
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function handlePhoneInput(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+    input.parentElement.classList.remove('error-shake');
+    document.getElementById('phone-error-msg').classList.add('hidden');
+}
+
+function handleEmailInput(input) {
+    input.parentElement.classList.remove('error-shake');
+    document.getElementById('email-error-msg').classList.add('hidden');
 }
 
 function validateStep() {
     const step = document.querySelector(`.step[data-step="${currentStep}"]`);
     if (currentStep === 1) {
         const route = document.getElementById('manual-route').value;
+        const number = document.getElementById('manual-civico').value;
         const city = document.getElementById('manual-city').value;
-        if (!route || !city) return false;
+        if (!route || !city || !number) {
+            alert("Completa i dati dell'indirizzo");
+            return false;
+        }
+        addressComponents = { route, streetNumber: number, city };
+        selectedAddress = `${route} ${number}, ${city}`;
+        citySelected = city;
+        document.getElementById('summary-text').innerText = selectedAddress;
     }
     if (currentStep === 2) {
         if (!step.querySelector('.selected')) {
@@ -778,26 +831,28 @@ function validateStep() {
     }
     if (currentStep === 7) {
         let valid = true;
-        const email = document.getElementById('email').value;
+        const emailInput = document.getElementById('email');
+        const email = emailInput.value.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!document.getElementById('nome').value) {
+        const telefono = document.getElementById('telefono').value;
+        const telRegex = /^3\d{8,9}$/;
+
+        if (!document.getElementById('nome').value.trim()) {
             document.getElementById('nome-container').classList.add('error-shake');
-            setTimeout(() => document.getElementById('nome-container').classList.remove('error-shake'), 400);
             valid = false;
         }
         if (!emailRegex.test(email)) {
             document.getElementById('email-container').classList.add('error-shake');
-            setTimeout(() => document.getElementById('email-container').classList.remove('error-shake'), 400);
+            document.getElementById('email-error-msg').classList.remove('hidden');
             valid = false;
         }
-        if (!document.getElementById('telefono').value) {
+        if (!telRegex.test(telefono)) {
             document.getElementById('telefono-container').classList.add('error-shake');
-            setTimeout(() => document.getElementById('telefono-container').classList.remove('error-shake'), 400);
+            document.getElementById('phone-error-msg').classList.remove('hidden');
             valid = false;
         }
         if (!document.getElementById('privacy').checked) {
             document.getElementById('privacy-container').classList.add('error-shake');
-            setTimeout(() => document.getElementById('privacy-container').classList.remove('error-shake'), 400);
             valid = false;
         }
         return valid;
@@ -843,7 +898,6 @@ async function submitFinalForm() {
     if (nav) nav.classList.add('hidden');
     document.getElementById('address-bar').classList.add('hidden');
 
-    // MOSTRA CARICAMENTO ANALISI AI
     main.innerHTML = `
         <div class="w-full max-w-xl text-center py-24 animate-fadeIn">
             <div class="relative inline-block mb-12">
@@ -882,8 +936,6 @@ async function submitFinalForm() {
         if (response.ok) {
             const resultData = await response.json();
             if (typeof gtag_report_conversion === 'function') gtag_report_conversion();
-            
-            // MOSTRA RISULTATO FINALE CON STIMA
             showStimaFinale(resultData, formData.nome);
         } else {
             throw new Error();
@@ -912,13 +964,13 @@ function showStimaFinale(data, nome) {
             
             <h2 class="text-xl font-medium text-slate-600">Ottime notizie ${nome}, la tua casa vale:</h2>
             <div class="text-5xl md:text-6xl font-black text-slate-900 my-4 tracking-tight">
-                € ${prezzo}
+                ${prezzo}
             </div>
             
             ${range ? `
                 <div class="mb-8">
                     <span class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-sm font-bold border border-indigo-100">
-                        Range stimato: € ${range}
+                        Range stimato: ${range}
                     </span>
                 </div>
             ` : ''}
@@ -935,7 +987,6 @@ function showStimaFinale(data, nome) {
 
             <div class="flex flex-col gap-4">
                 <button onclick="location.reload()" class="btn-gradient w-full py-5 font-bold text-xl shadow-lg">Valuta un altro immobile</button>
-                <p class="text-[11px] text-slate-400">Valutazione basata su intelligenza artificiale v2.5 e dati OMI 2024</p>
             </div>
         </div>
     `;
