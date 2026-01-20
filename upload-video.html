@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Migliora la Valutazione | vendereCASA.ai</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.05), transparent 45%), #f8fafc; 
+            min-height: 100vh;
+        }
+        .main-card { background: white; border-radius: 2rem; box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .btn-gradient {
+            background: linear-gradient(135deg, #7c3aed 0%, #7C3AED 100%);
+            border-radius: 9999px;
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.3);
+        }
+        .btn-gradient:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .upload-zone {
+            border: 2px dashed #e2e8f0;
+            transition: all 0.2s;
+        }
+        .upload-zone.dragover { border-color: #7c3aed; background: #f5f3ff; }
+        
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .analyzing { animation: pulse-soft 2s infinite; }
+    </style>
+</head>
+<body class="flex flex-col items-center p-4">
+
+    <header class="py-10 flex justify-center w-full">
+        <div class="text-2xl font-black tracking-tighter text-slate-900 uppercase">
+            vendere<span class="text-indigo-600">CASA</span>.ai
+        </div>
+    </header>
+
+    <main class="w-full max-w-xl">
+        <div class="main-card p-8 md:p-10 text-center">
+            
+            <div class="inline-block p-4 bg-violet-100 text-violet-600 rounded-2xl mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-4">Migliora la tua stima</h1>
+            <p class="text-slate-500 mb-8 leading-relaxed">
+                Carica un breve video degli interni (max 30 sec). La nostra AI analizzerà finiture e materiali per una valutazione più precisa.
+            </p>
+
+            <div id="drop-zone" class="upload-zone rounded-[2rem] p-10 cursor-pointer mb-8 group">
+                <input type="file" id="video-input" accept="video/*" class="hidden">
+                <div id="upload-prompt">
+                    <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🎥</div>
+                    <p class="text-sm font-bold text-slate-700">Trascina il video qui o clicca</p>
+                    <p class="text-xs text-slate-400 mt-2">MP4, MOV fino a 50MB</p>
+                </div>
+                <div id="file-ready" class="hidden">
+                    <p class="text-indigo-600 font-bold">Video selezionato!</p>
+                    <p id="file-name-display" class="text-xs text-slate-500 truncate mt-1"></p>
+                    <button onclick="resetUpload()" class="text-xs text-red-500 underline mt-2">Rimuovi</button>
+                </div>
+            </div>
+
+            <video id="preview" class="hidden w-full rounded-2xl mb-6 border border-slate-100 shadow-inner" controls></video>
+
+            <button id="submit-btn" disabled onclick="handleUpload()" class="btn-gradient w-full py-5 font-bold text-xl">
+                Analizza Video con AI
+            </button>
+
+            <div id="loading-state" class="hidden mt-8">
+                <div class="flex flex-col gap-3">
+                    <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <p id="status-text" class="text-xs text-slate-400 font-bold uppercase tracking-widest analyzing">Caricamento video...</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-slate-400 text-xs mt-8">
+            Il video verrà analizzato solo a fini valutativi e non sarà condiviso con terzi.
+        </p>
+    </main>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const videoInput = document.getElementById('video-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const preview = document.getElementById('preview');
+        const uploadPrompt = document.getElementById('upload-prompt');
+        const fileReady = document.getElementById('file-ready');
+
+        // Drag & Drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => {
+            dropZone.addEventListener(e, (evt) => {
+                evt.preventDefault();
+                evt.stopPropagation();
+            });
+        });
+
+        dropZone.onclick = () => videoInput.click();
+
+        dropZone.ondragover = () => dropZone.classList.add('dragover');
+        dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+
+        dropZone.ondrop = (e) => {
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            processFile(file);
+        };
+
+        videoInput.onchange = (e) => processFile(e.target.files[0]);
+
+        function processFile(file) {
+            if (file && file.type.startsWith('video/')) {
+                document.getElementById('file-name-display').innerText = file.name;
+                uploadPrompt.classList.add('hidden');
+                fileReady.classList.remove('hidden');
+                submitBtn.disabled = false;
+                
+                // Anteprima
+                const url = URL.createObjectURL(file);
+                preview.src = url;
+                preview.classList.remove('hidden');
+            }
+        }
+
+        function resetUpload() {
+            videoInput.value = '';
+            uploadPrompt.classList.remove('hidden');
+            fileReady.classList.add('hidden');
+            preview.classList.add('hidden');
+            submitBtn.disabled = true;
+        }
+
+        async function handleUpload() {
+            const file = videoInput.files[0];
+            if(!file) return;
+
+            submitBtn.classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+            
+            // Simulazione progresso (mentre carichi su Make/Vercel)
+            let progress = 0;
+            const bar = document.getElementById('progress-bar');
+            const status = document.getElementById('status-text');
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 95) {
+                    clearInterval(interval);
+                    status.innerText = "L'AI sta guardando la tua casa...";
+                }
+                bar.style.width = Math.min(progress, 95) + '%';
+            }, 500);
+
+            // QUI ANDRÀ LA TUA CHIAMATA FETCH AL WEBHOOK DI MAKE
+            // await sendToMake(file); 
+        }
+    </script>
+</body>
+</html>
