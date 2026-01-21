@@ -385,6 +385,13 @@ function showCivicoField() {
     document.getElementById('civico-hint').classList.remove('hidden');
 }
 
+// Appena la pagina carica, diciamo al browser che questo è lo "Step 1"
+window.onload = () => {
+    if (!history.state) {
+        history.replaceState({ step: 1 }, "Step 1", "");
+    }
+};
+
 function startValuationFlow() {
     const manualCiv = (window.innerWidth <= 640) ? civicoInputMobile.value.trim() : civicoInputDesktop.value.trim();
     
@@ -631,21 +638,38 @@ function nextStep() {
     if (!validateStep()) return;
     if (currentStep === 7) { submitFinalForm(); return; }
     currentStep++; updateUI();
-    history.pushState({ step: stepNumber }, `Step ${stepNumber}`, "");
+    history.pushState({ step: stepNumber }, "Step " + stepNumber, "");
+    currentStep = stepNumber;
 }
 
-function prevStep() { if (currentStep > 1) { currentStep--; updateUI(); } else { location.reload(); } }
+function prevStep() {
+    history.back();
+}
+// { if (currentStep > 1) { currentStep--; updateUI(); } else { location.reload(); } }
 
 window.onpopstate = function(event) {
     if (event.state && event.state.step) {
-        // Se c'è uno stato salvato, torna a quello step
-        // Nota: Assicurati che la tua funzione goToStep(n) nasconda lo step attuale e mostri il precedente
-        goToStep(event.state.step);
+        // L'utente è tornato indietro a uno step specifico salvato
+        mostraStepSenzaCreareStoria(event.state.step);
     } else {
-        // Se non c'è stato (siamo tornati all'inizio), mostra il primo step
-        goToStep(1);
+        // Se non c'è uno stato (siamo tornati all'inizio), forza lo step 1
+        mostraStepSenzaCreareStoria(1);
     }
 };
+
+// Questa funzione serve a cambiare i div senza aggiungere nuovi record alla cronologia
+function mostraStepSenzaCreareStoria(n) {
+    // Nascondi tutti i tuoi step (es. quelli con classe .step)
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    
+    // Mostra quello corretto
+    const targetStep = document.getElementById('step' + n);
+    if (targetStep) {
+        targetStep.classList.add('active');
+    }
+    
+    currentStep = n; // Sincronizza la tua variabile globale
+}
 
 // Funzione di supporto (se non l'hai già simile)
 function goToStep(n) {
@@ -788,4 +812,5 @@ window.onload = () => { loadGoogleMaps(); generateTotalePiani(); updateUI(); };
 </script>
 </body>
 </html>
+
 
