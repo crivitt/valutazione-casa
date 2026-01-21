@@ -706,7 +706,7 @@ async function submitFinalForm() {
         totale_piani_edificio: document.querySelector('#totale-piani-container .selected')?.innerText || "N/D",
         stato: document.querySelector('#stato-group .selected')?.innerText || "N/D",
         classe_energetica: document.querySelector('#classe-group .selected')?.innerText || "N/D",
-        ascensore: document.querySelector('#ascensore-box .selected')?.innerText || "N/D",
+        ascensore: document.querySelector('#ascensore-box .selected')?.innerText || "No",
         pertinenze: pertinenze,
         nome: document.getElementById('nome').value,
         email: document.getElementById('email').value,
@@ -834,6 +834,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
