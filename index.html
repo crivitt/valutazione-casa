@@ -821,14 +821,18 @@ async function handleVideoUpload(input) {
     try {
         const frames = await extractFrames(file);
         
-        // Sostituisci questo URL con il tuo NUOVO Webhook di Make dedicato al Video
+    const payload = {
+            valuation_id: currentID
+        };
+
+        frames.forEach((frame, index) => {
+            payload[`video_frame_${index + 1}`] = frame;
+        });
+        
         const response = await fetch("https://hook.eu1.make.com/ztbaddyjfsd52kf7owu8xgnxca7eak66", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                valuation_id: currentID,
-                video_frames: frames
-            })
+            body: JSON.stringify(payload)
         });
 
         if (response.ok) {
@@ -899,5 +903,6 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
