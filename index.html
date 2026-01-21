@@ -631,9 +631,28 @@ function nextStep() {
     if (!validateStep()) return;
     if (currentStep === 7) { submitFinalForm(); return; }
     currentStep++; updateUI();
+    history.pushState({ step: stepNumber }, `Step ${stepNumber}`, "");
 }
 
 function prevStep() { if (currentStep > 1) { currentStep--; updateUI(); } else { location.reload(); } }
+
+window.onpopstate = function(event) {
+    if (event.state && event.state.step) {
+        // Se c'è uno stato salvato, torna a quello step
+        // Nota: Assicurati che la tua funzione goToStep(n) nasconda lo step attuale e mostri il precedente
+        goToStep(event.state.step);
+    } else {
+        // Se non c'è stato (siamo tornati all'inizio), mostra il primo step
+        goToStep(1);
+    }
+};
+
+// Funzione di supporto (se non l'hai già simile)
+function goToStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    currentStep = n; // Aggiorna la variabile globale del tuo script
+}
 
 async function submitFinalForm() {
     const pertinenze = Array.from(document.querySelectorAll('#pertinenze-group .selected'))
@@ -769,3 +788,4 @@ window.onload = () => { loadGoogleMaps(); generateTotalePiani(); updateUI(); };
 </script>
 </body>
 </html>
+
