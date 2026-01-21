@@ -687,11 +687,15 @@ function goToStep(n) {
 };
 
 async function submitFinalForm() {
+    const uniqueID = "VAL-" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
+    localStorage.setItem('currentValuationID', uniqueID);
+    
     const pertinenze = Array.from(document.querySelectorAll('#pertinenze-group .selected'))
         .map(el => el.querySelector('span').innerText)
         .join(', ') || "Nessuna";
 
     const formData = {
+        valuation_id: uniqueID,
         indirizzo: selectedAddress,
         citta: citySelected,
         mq: document.getElementById('mq').value,
@@ -830,6 +834,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
