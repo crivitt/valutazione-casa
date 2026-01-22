@@ -836,11 +836,30 @@ async function handleVideoUpload(input) {
         });
 
         if (response.ok) {
+            const data = await response.json(); // Leggiamo la risposta di Make
+
             document.getElementById('upload-section').innerHTML = `
-                <div class="text-center py-4 animate-fadeIn">
-                    <div class="text-3xl mb-2">✅</div>
-                    <h4 class="font-bold text-white text-xl">Video Analizzato!</h4>
-                    <p class="text-indigo-100 text-sm">Abbiamo aggiornato la tua pratica. Riceverai il report completo via email.</p>
+                <div class="text-center py-6 animate-fadeIn bg-white/5 rounded-3xl border border-white/10 p-6">
+                    <h4 class="font-bold text-white text-2xl mb-2">${data.feedback_titolo || 'Valutazione Completata!'}</h4>
+                    <p class="text-indigo-200 text-sm mb-6">${data.feedback_testo || 'Ecco i risultati dell\'analisi AI sui tuoi interni.'}</p>
+                    
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 py-6 rounded-2xl mb-6 shadow-2xl">
+                        <p class="text-xs uppercase tracking-widest text-white/70 mb-1 font-bold">Nuovo Valore Stimato</p>
+                        <div class="text-4xl font-black text-white">
+                            € ${data.nuovo_prezzo ? data.nuovo_prezzo.toLocaleString('it-IT') : 'N/D'}
+                        </div>
+                    </div>
+
+                    <div class="text-left bg-black/40 p-5 rounded-xl border border-white/10">
+                        <p class="text-xs font-bold text-indigo-400 uppercase mb-2 tracking-tighter">Analisi Tecnica dei Materiali:</p>
+                        <p class="text-sm text-white/90 italic leading-relaxed">
+                            "${data.analisi_tecnica || 'Analisi non disponibile.'}"
+                        </p>
+                    </div>
+
+                    <button onclick="window.location.reload()" class="mt-8 text-white/40 hover:text-indigo-300 text-xs underline transition">
+                        Effettua una nuova stima
+                    </button>
                 </div>`;
         }
     } catch (error) {
@@ -903,6 +922,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
