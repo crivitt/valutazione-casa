@@ -861,6 +861,12 @@ async function handleVideoUpload(input) {
                         Effettua una nuova stima
                     </button>
                 </div>`;
+        } else {
+            // Se Make risponde con un errore (es. ID non trovato)
+            const errorData = await response.json().catch(() => ({}));
+            alert(errorData.error || "Errore durante l'analisi. Riprova.");
+            uploadContent.classList.remove('hidden');
+            uploadLoading.classList.add('hidden');
         }
     } catch (error) {
         console.error("Errore:", error);
@@ -922,6 +928,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
