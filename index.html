@@ -834,33 +834,37 @@ async function handleVideoUpload(input) {
         if (response.ok) {
             const data = await response.json();
 
-            // 1. EFFETTO MORPHING SUL PREZZO
+            // 1. EFFETTO MORPHING SUL PREZZO (Potenziato)
             if (mainPriceContainer && data.nuovo_prezzo) {
-                mainPriceContainer.style.transition = "all 0.8s ease-in-out";
-                
-                // Diventa indaco e si ingrandisce leggermente
-                mainPriceContainer.classList.add('text-indigo-600', 'scale-105');
+                mainPriceContainer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+                mainPriceContainer.style.color = "#4f46e5"; 
+                mainPriceContainer.style.transform = "scale(1.1)";
                 
                 setTimeout(() => {
-                    // Cambia il numero nel picco dell'animazione
                     mainPriceContainer.innerText = `€ ${data.nuovo_prezzo.toLocaleString('it-IT')}`;
-                    mainPriceContainer.classList.remove('scale-105');
-                }, 400);
+                    mainPriceContainer.style.transform = "scale(1)";
+                }, 500);
 
-                // TORNA AL COLORE ORIGINALE DOPO 2 SECONDI
                 setTimeout(() => {
-                    mainPriceContainer.classList.remove('text-indigo-600');
-                }, 2000);
+                    mainPriceContainer.style.color = ""; 
+                    mainPriceContainer.style.transform = ""; 
+                }, 2500);
             }
 
-            // 2. BOX FEEDBACK (Piatto, senza nidificazioni)
-            document.getElementById('upload-section').innerHTML = `
-                <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] text-white shadow-xl animate-fadeIn relative">
+            // 2. SISTEMAZIONE UPLOAD-SECTION (Rimuoviamo i div nidificati)
+            const section = document.getElementById('upload-section');
+            
+            // Rimuoviamo lo stile "vecchio" dal contenitore padre per evitare doppioni
+            section.className = ""; // Reset di tutte le classi (via il viola e il padding vecchio)
+
+            // Iniettiamo l'unico div finale
+            section.innerHTML = `
+                <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] text-white shadow-xl animate-fadeIn mt-8">
                     <div class="flex items-center gap-3 mb-2">
                         <span class="text-xl">✨</span>
                         <h4 class="text-xl font-bold">${data.feedback_titolo || 'Valutazione Ottimizzata'}</h4>
                     </div>
-                    <p class="text-indigo-100 text-sm mb-4">
+                    <p class="text-indigo-100 text-sm mb-4 leading-relaxed">
                         ${data.feedback_testo || 'Dettagli video analizzati con successo.'}
                     </p>
                     <div class="pt-4 border-t border-white/10 text-[10px] uppercase tracking-[0.2em] font-bold text-indigo-300">
@@ -948,6 +952,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
