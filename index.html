@@ -834,7 +834,7 @@ async function handleVideoUpload(input) {
         if (response.ok) {
             const data = await response.json();
 
-            // 1. EFFETTO MORPHING SUL PREZZO (Potenziato)
+            // 1. EFFETTO MORPHING SUL PREZZO (Rimane invariato)
             if (mainPriceContainer && data.nuovo_prezzo) {
                 mainPriceContainer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
                 mainPriceContainer.style.color = "#4f46e5"; 
@@ -851,18 +851,15 @@ async function handleVideoUpload(input) {
                 }, 2500);
             }
 
-            // 2. SISTEMAZIONE UPLOAD-SECTION (Rimuoviamo i div nidificati)
+            // 2. AGGIORNAMENTO CONTENUTO (Mantenendo il contenitore originale)
             const section = document.getElementById('upload-section');
             
-            // Rimuoviamo lo stile "vecchio" dal contenitore padre per evitare doppioni
-            section.className = ""; // Reset di tutte le classi (via il viola e il padding vecchio)
-
-            // Iniettiamo l'unico div finale
+            // Iniettiamo solo il contenuto, senza ricreare il div viola esterno
             section.innerHTML = `
-                <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] text-white shadow-xl animate-fadeIn mt-8">
+                <div class="animate-fadeIn">
                     <div class="flex items-center gap-3 mb-2">
                         <span class="text-xl">✨</span>
-                        <h4 class="text-xl font-bold">${data.feedback_titolo || 'Valutazione Ottimizzata'}</h4>
+                        <h4 class="text-xl font-bold text-white">${data.feedback_titolo || 'Valutazione Ottimizzata'}</h4>
                     </div>
                     <p class="text-indigo-100 text-sm mb-4 leading-relaxed">
                         ${data.feedback_testo || 'Dettagli video analizzati con successo.'}
@@ -977,6 +974,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
