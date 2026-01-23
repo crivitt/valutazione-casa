@@ -834,22 +834,27 @@ async function handleVideoUpload(input) {
         if (response.ok) {
             const data = await response.json();
 
-            // 1. EFFETTO MORPHING SUL PREZZO (Rimane invariato)
-            if (mainPriceContainer && data.nuovo_prezzo) {
-                mainPriceContainer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
-                mainPriceContainer.style.color = "#4f46e5"; 
-                mainPriceContainer.style.transform = "scale(1.1)";
-                
-                setTimeout(() => {
-                    mainPriceContainer.innerText = `€ ${data.nuovo_prezzo.toLocaleString('it-IT')}`;
-                    mainPriceContainer.style.transform = "scale(1)";
-                }, 500);
-
-                setTimeout(() => {
-                    mainPriceContainer.style.color = ""; 
-                    mainPriceContainer.style.transform = ""; 
-                }, 2500);
-            }
+            // 1. EFFETTO MORPHING + ROLLING NUMBERS
+        if (mainPriceContainer && data.nuovo_prezzo) {
+            // Estraiamo il numero attuale (es. 382500)
+            const prezzoIniziale = parseInt(mainPriceContainer.innerText.replace(/\D/g, '')) || 0;
+            const prezzoFinale = data.nuovo_prezzo;
+        
+            // FASE 1: Inizio transizione visiva (Colore e Scala)
+            mainPriceContainer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+            mainPriceContainer.style.color = "#4f46e5"; // Indigo 600
+            mainPriceContainer.style.transform = "scale(1.05)";
+        
+            // FASE 2: Animazione Conteggio (Simile al link GitHub)
+            // Durata 1500ms per dare tempo all'utente di vedere i numeri scorrere
+            animatePriceCounting(mainPriceContainer, prezzoIniziale, prezzoFinale, 1500);
+        
+            // FASE 3: Reset colore e scala dopo che il conteggio è finito
+            setTimeout(() => {
+                mainPriceContainer.style.color = ""; 
+                mainPriceContainer.style.transform = ""; 
+            }, 3000); // Aspettiamo che il conteggio sia ben terminato
+        }
 
             // 2. AGGIORNAMENTO CONTENUTO (Mantenendo il contenitore originale)
             const section = document.getElementById('upload-section');
@@ -880,16 +885,18 @@ async function handleVideoUpload(input) {
     }
 }
 
-// Funzione Helper per l'animazione del contatore
-function animateValue(obj, start, end, duration) {
+function animatePriceCounting(element, start, end, duration) {
     let startTimestamp = null;
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        // Easing out function per rendere l'animazione più fluida alla fine
-        const easeOutQuad = progress * (2 - progress);
-        const current = Math.floor(easeOutQuad * (end - start) + start);
-        obj.innerHTML = `€ ${current.toLocaleString('it-IT')}`;
+        
+        // Easing per rallentare verso la fine (rende l'effetto più naturale)
+        const easeOutQuint = 1 - Math.pow(1 - progress, 5);
+        
+        const currentCount = Math.floor(easeOutQuint * (end - start) + start);
+        element.innerText = `€ ${currentCount.toLocaleString('it-IT')}`;
+        
         if (progress < 1) {
             window.requestAnimationFrame(step);
         }
@@ -974,6 +981,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
