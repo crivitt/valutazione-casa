@@ -942,6 +942,31 @@ function validateMq(input) {
 }
 
 window.onload = () => {
+    // 1. Recupero parametri dall'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const remoteID = urlParams.get('id');
+    const remoteNome = urlParams.get('nome');
+    const remotePrezzo = urlParams.get('prezzo');
+
+    // 2. Se i parametri esistono, salta il quiz e vai alla stima
+    if (remoteID && remoteNome && remotePrezzo) {
+        // Salva l'ID per il caricamento video
+        localStorage.setItem('currentValuationID', remoteID);
+        
+        // Formatta il prezzo (es. da 382500 a € 382.500)
+        const prezzoFormattato = `€ ${parseInt(remotePrezzo).toLocaleString('it-IT')}`;
+        
+        // Nasconde il contenuto della home e l'eventuale barra indirizzo
+        document.getElementById('home-content').classList.add('hidden');
+        const addressBar = document.getElementById('address-bar');
+        if (addressBar) addressBar.classList.add('hidden');
+        
+        // Forza la visualizzazione della stima finale
+        showStimaFinale({ prezzo: prezzoFormattato }, remoteNome);
+        return; // Blocca l'esecuzione del resto delle funzioni
+    }
+
+    // 3. Logica standard (se NON è un ritorno da mail)
     if (!history.state) {
         history.replaceState({ step: 1 }, "Step 1", "");
     }
@@ -952,6 +977,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
