@@ -815,7 +815,6 @@ async function handleVideoUpload(input) {
     const uploadContent = document.getElementById('upload-content');
     const uploadLoading = document.getElementById('upload-loading');
     
-    // Troviamo il div del prezzo
     const mainPriceContainer = document.querySelector('main .text-5xl, main .text-6xl');
 
     uploadContent.classList.add('hidden');
@@ -835,27 +834,36 @@ async function handleVideoUpload(input) {
         if (response.ok) {
             const data = await response.json();
 
+            // 1. EFFETTO MORPHING SUL PREZZO
             if (mainPriceContainer && data.nuovo_prezzo) {
-                // Estraiamo il prezzo attuale togliendo simboli non numerici
-                const prezzoAttuale = parseInt(mainPriceContainer.innerText.replace(/\D/g, '')) || 0;
-                const prezzoNuovo = data.nuovo_prezzo;
+                mainPriceContainer.style.transition = "all 0.8s ease-in-out";
+                
+                // Diventa indaco e si ingrandisce leggermente
+                mainPriceContainer.classList.add('text-indigo-600', 'scale-105');
+                
+                setTimeout(() => {
+                    // Cambia il numero nel picco dell'animazione
+                    mainPriceContainer.innerText = `€ ${data.nuovo_prezzo.toLocaleString('it-IT')}`;
+                    mainPriceContainer.classList.remove('scale-105');
+                }, 400);
 
-                // Animazione contatore
-                animateValue(mainPriceContainer, prezzoAttuale, prezzoNuovo, 2000);
-                mainPriceContainer.classList.add('text-indigo-600', 'transition-colors', 'duration-500');
+                // TORNA AL COLORE ORIGINALE DOPO 2 SECONDI
+                setTimeout(() => {
+                    mainPriceContainer.classList.remove('text-indigo-600');
+                }, 2000);
             }
 
-            // Box Feedback Viola (Stile Caricamento)
+            // 2. BOX FEEDBACK (Piatto, senza nidificazioni)
             document.getElementById('upload-section').innerHTML = `
-                <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] text-white shadow-xl animate-fadeIn">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-2xl animate-bounce">✨</span>
-                        <h4 class="text-xl font-bold">${data.feedback_titolo || 'Analisi Completata'}</h4>
+                <div class="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] text-white shadow-xl animate-fadeIn relative">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xl">✨</span>
+                        <h4 class="text-xl font-bold">${data.feedback_titolo || 'Valutazione Ottimizzata'}</h4>
                     </div>
-                    <p class="text-indigo-100 text-sm leading-relaxed">
-                        ${data.feedback_testo || 'L\'AI ha ricalcolato il valore basandosi sui dettagli rilevati nel video.'}
+                    <p class="text-indigo-100 text-sm mb-4">
+                        ${data.feedback_testo || 'Dettagli video analizzati con successo.'}
                     </p>
-                    <div class="mt-4 pt-4 border-t border-white/10 text-[10px] uppercase tracking-widest font-bold text-indigo-200">
+                    <div class="pt-4 border-t border-white/10 text-[10px] uppercase tracking-[0.2em] font-bold text-indigo-300">
                         Prezzo aggiornato con AI Video Predictor
                     </div>
                 </div>`;
@@ -865,7 +873,7 @@ async function handleVideoUpload(input) {
         }
     } catch (error) {
         console.error("Errore:", error);
-        alert("C'è stato un errore nell'analisi. Riprova.");
+        alert("Errore nell'analisi. Riprova.");
         uploadContent.classList.remove('hidden');
         uploadLoading.classList.add('hidden');
     }
@@ -940,6 +948,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
