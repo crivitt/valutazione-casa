@@ -834,26 +834,30 @@ async function handleVideoUpload(input) {
         if (response.ok) {
             const data = await response.json();
 
-            // 1. EFFETTO MORPHING + ROLLING NUMBERS
         if (mainPriceContainer && data.nuovo_prezzo) {
-            // Estraiamo il numero attuale (es. 382500)
             const prezzoIniziale = parseInt(mainPriceContainer.innerText.replace(/\D/g, '')) || 0;
             const prezzoFinale = data.nuovo_prezzo;
         
-            // FASE 1: Inizio transizione visiva (Colore e Scala)
-            mainPriceContainer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
-            mainPriceContainer.style.color = "#4f46e5"; // Indigo 600
-            mainPriceContainer.style.transform = "scale(1.05)";
-        
-            // FASE 2: Animazione Conteggio (Simile al link GitHub)
-            // Durata 1500ms per dare tempo all'utente di vedere i numeri scorrere
-            animatePriceCounting(mainPriceContainer, prezzoIniziale, prezzoFinale, 1500);
-        
-            // FASE 3: Reset colore e scala dopo che il conteggio è finito
-            setTimeout(() => {
-                mainPriceContainer.style.color = ""; 
-                mainPriceContainer.style.transform = ""; 
-            }, 3000); // Aspettiamo che il conteggio sia ben terminato
+            // Eseguiamo l'effetto visivo SOLO se il prezzo è effettivamente cambiato
+            if (prezzoIniziale !== prezzoFinale) {
+                // FASE 1: Inizio transizione visiva
+                mainPriceContainer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+                mainPriceContainer.style.color = "#4f46e5"; 
+                mainPriceContainer.style.transform = "scale(1.05)";
+            
+                // FASE 2: Animazione Conteggio
+                animatePriceCounting(mainPriceContainer, prezzoIniziale, prezzoFinale, 1500);
+            
+                // FASE 3: Reset colore e scala
+                setTimeout(() => {
+                    mainPriceContainer.style.color = ""; 
+                    mainPriceContainer.style.transform = ""; 
+                }, 3000);
+            } else {
+                // Se il prezzo è uguale (video non valido o score 1.0), 
+                // aggiorniamo solo il testo per sicurezza senza animazioni "aggressive"
+                mainPriceContainer.innerText = `€ ${prezzoFinale.toLocaleString('it-IT')}`;
+            }
         }
 
             // 2. AGGIORNAMENTO CONTENUTO (Mantenendo il contenitore originale)
@@ -975,6 +979,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
