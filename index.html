@@ -1,32 +1,13 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17824143507"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-17824143507');
-    </script>
-        
-    <!-- Google Ads Conversion Snippet -->
-    <script>
-    function gtag_report_conversion(url) {
-      var callback = function () {
-        if (typeof(url) != 'undefined') {
-          window.location = url;
-        }
-      };
-      if (typeof gtag === 'function') {
-          gtag('event', 'conversion', {
-              'send_to': 'AW-17824143507/nXTzCKbb_9UbEJOxm7NC',
-              'event_callback': callback
-          });
-      }
-      return false;
-    }
-    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TNMPKD6F');</script>
+    <!-- End Google Tag Manager -->
         
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -37,6 +18,10 @@
 
 </head>
 <body class="flex flex-col min-h-screen">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TNMPKD6F"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <header class="py-6 flex justify-center bg-transparent">
         <div class="text-2xl font-black tracking-tighter text-slate-900 uppercase">
@@ -753,7 +738,12 @@ async function submitFinalForm() {
         
         if (response.ok) {
             const resultData = await response.json();
-            if (typeof gtag_report_conversion === 'function') gtag_report_conversion();
+            // Sostituiamo la vecchia funzione Google Ads con l'evento per GTM
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'lead_form_success',
+                'type': 'anagrafica'
+            });
             showStimaFinale(resultData, formData.nome);
         } else {
             throw new Error();
@@ -833,6 +823,12 @@ async function handleVideoUpload(input) {
 
         if (response.ok) {
             const data = await response.json();
+            // Inizializza e spingi l'evento
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'video_analysis_success',
+            'type': 'video'
+        });
 
         if (mainPriceContainer && data.nuovo_prezzo) {
             const prezzoIniziale = parseInt(mainPriceContainer.innerText.replace(/\D/g, '')) || 0;
@@ -873,6 +869,9 @@ async function handleVideoUpload(input) {
                     <p class="text-indigo-100 text-sm mb-4 leading-relaxed">
                         ${data.feedback_testo || 'Dettagli video analizzati con successo.'}
                     </p>
+                    <div class="pt-4 border-t border-white/10 text-[10px] uppercase tracking-[0.2em] font-bold text-indigo-300">
+                        Risultato analisi video AI
+                    </div>
                 </div>`;
                 
         } else {
@@ -976,6 +975,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
