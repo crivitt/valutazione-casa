@@ -761,7 +761,7 @@ async function submitFinalForm() {
 
 function showStimaFinale(data, nome) {
     const main = document.querySelector('main');
-    const prezzo = Number(data.prezzo);
+    const prezzo = data.prezzo ? Number(String(data.prezzo).replace(/\D/g, '')) : 0;
     
     main.innerHTML = `
         <div class="w-full max-w-2xl bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-indigo-50 text-center animate-fadeIn">
@@ -975,6 +975,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
