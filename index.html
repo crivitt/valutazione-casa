@@ -624,7 +624,14 @@ function nextStep() {
     currentStep++; 
     updateUI();
     
-    // CORRETTO: Usiamo currentStep, non stepNumber
+    // --- AGGIUNTA GTM ---
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'form_step_reached',
+        'step_name': 'step_' + currentStep // Invierà step_2, step_3, ecc.
+    });
+    // --------------------
+    
     history.pushState({ step: currentStep }, "Step " + currentStep, "");
 }
 
@@ -1021,9 +1028,19 @@ window.onload = () => {
     generateTotalePiani(); 
     updateUI(); 
 };
+
+// Invia lo Step 1 non appena il sito è pronto per essere usato
+window.addEventListener('load', () => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'form_step_reached',
+        'step_name': 'step_1'
+    });
+});
 </script>
 </body>
 </html>
+
 
 
 
