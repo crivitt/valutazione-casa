@@ -823,6 +823,32 @@ async function handleVideoUpload(input) {
 
         if (response.ok) {
             const data = await response.json();
+                if (data.gia_fatto) {
+                    uploadLoading.classList.add('hidden');
+                
+                    // Aggiorniamo il prezzo nel main (senza animazione, perché è un dato storico)
+                    if (mainPriceContainer && data.nuovo_prezzo) {
+                        mainPriceContainer.innerText = `€ ${Number(data.nuovo_prezzo).toLocaleString('it-IT')}`;
+                    }
+                
+                    const section = document.getElementById('upload-section');
+                    if (section) {
+                        section.innerHTML = `
+                            <div class="animate-fadeIn">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="text-xl">✅</span>
+                                    <h4 class="text-xl font-bold text-white">${data.feedback_titolo}</h4>
+                                </div>
+                                <p class="text-indigo-100 text-sm mb-4 leading-relaxed">
+                                    ${data.feedback_testo}
+                                </p>
+                                <div class="pt-4 border-t border-white/10 text-[10px] uppercase tracking-[0.2em] font-bold text-indigo-300">
+                                    Dati salvati in archivio
+                                </div>
+                            </div>`;
+                    }
+                    return; // Stop
+                }
             // Inizializza e spingi l'evento
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
@@ -975,6 +1001,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
