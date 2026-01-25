@@ -687,6 +687,12 @@ function goToStep(n) {
 };
 
 async function submitFinalForm() {
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'lead_form_submit_click'
+    });
+    
     const uniqueID = "VAL-" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
     localStorage.setItem('currentValuationID', uniqueID);
     
@@ -1061,6 +1067,7 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
 
 
 
