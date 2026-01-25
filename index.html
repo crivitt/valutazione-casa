@@ -905,9 +905,31 @@ async function handleVideoUpload(input) {
         }
     } catch (error) {
         console.error("Errore:", error);
-        alert("Errore nell'analisi. Riprova.");
-        uploadContent.classList.remove('hidden');
+        
+        // 1. Nascondiamo il caricamento e torniamo a mostrare il contenuto originale
         uploadLoading.classList.add('hidden');
+        
+        // 2. Opzionale: Mostriamo un messaggio specifico nel box viola
+        const section = document.getElementById('upload-section');
+        if (section) {
+            section.innerHTML = `
+                <div class="animate-fadeIn border-2 border-red-500/50 p-4 rounded-xl bg-red-500/10">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xl">⚠️</span>
+                        <h4 class="text-xl font-bold text-white">Qualcosa è andato storto</h4>
+                    </div>
+                    <p class="text-red-100 text-sm mb-4">
+                        Non siamo riusciti a trovare la tua valutazione o il file non è valido. 
+                        Riprova o contatta l'assistenza.
+                    </p>
+                    <button onclick="location.reload()" class="text-xs font-bold uppercase tracking-widest text-white underline">
+                        Riprova caricamento
+                    </button>
+                </div>`;
+        } else {
+            alert("ID valutazione non valido o errore di rete. Riprova.");
+            uploadContent.classList.remove('hidden');
+        }
     }
 }
 
@@ -1001,6 +1023,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
