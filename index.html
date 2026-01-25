@@ -761,7 +761,7 @@ async function submitFinalForm() {
 
 function showStimaFinale(data, nome) {
     const main = document.querySelector('main');
-    const prezzo = data.prezzo || "Calcolo...";
+    const prezzo = data.prezzo ? Number(data.prezzo) : 0;
     
     main.innerHTML = `
         <div class="w-full max-w-2xl bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-indigo-50 text-center animate-fadeIn">
@@ -770,7 +770,7 @@ function showStimaFinale(data, nome) {
             </div>
             
             <h2 class="text-xl font-medium text-slate-600">Ottime notizie ${nome}, la tua casa vale:</h2>
-            <div class="text-5xl md:text-6xl font-black text-slate-900 my-4 tracking-tight">${prezzo}</div>
+            <div class="text-5xl md:text-6xl font-black text-slate-900 my-4 tracking-tight">${prezzo > 0 ? `€ ${prezzo.toLocaleString('it-IT')}` : "Calcolo..."}</div>
             
             <div id="upload-section" class="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[2rem] my-8 text-white text-left relative overflow-hidden shadow-xl">
                 <div class="relative z-10" id="upload-content">
@@ -975,6 +975,7 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
 
 
 
