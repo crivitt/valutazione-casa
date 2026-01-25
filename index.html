@@ -404,6 +404,14 @@ function startValuationFlow() {
     document.getElementById('summary-text').innerText = selectedAddress || (addressComponents.route + " " + addressComponents.streetNumber + ", " + addressComponents.city);
     
     currentStep = (citySelected === "tua zona") ? 1 : 2;
+
+    // AGGIUNTA GTM: Se saltiamo direttamente al 2, inviamo l'evento ora
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'form_step_reached',
+        'step_name': 'step_' + currentStep
+    });
+    
     updateUI();
 }
 
@@ -1040,6 +1048,7 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
 
 
 
