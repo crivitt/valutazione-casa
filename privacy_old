@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | VendiCasa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+    <div class="max-w-3xl mx-auto px-6 py-12 bg-white shadow-sm mt-10 rounded-xl mb-20">
+        <h1 class="text-3xl font-bold mb-6 text-gray-900 border-b pb-4">Informativa Privacy – GDPR 2016/679</h1>
+        
+        <div class="bg-blue-50 p-4 rounded-lg mb-8 border border-blue-100 text-sm">
+            <p><strong>Titolare del trattamento:</strong> [TUO NOME / RAGIONE SOCIALE]</p>
+            <p><strong>Indirizzo:</strong> [INDIRIZZO]</p>
+            <p><strong>Email referente privacy:</strong> [EMAIL]</p>
+        </div>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-blue-600">1. Finalità del trattamento</h2>
+            <p>I dati personali conferiti tramite il form online saranno trattati per le seguenti finalità[cite: 2]:</p>
+            <ul class="list-disc ml-6 mt-2 space-y-2">
+                <li><strong>A)</strong> Gestione della richiesta di contatto e valutazione dell’immobile[cite: 2].</li>
+                <li><strong>B)</strong> Comunicazione dei dati all’Agenzia Immobiliare Partner per la valutazione e l’eventuale incarico di vendita[cite: 2].</li>
+                <li><strong>C)</strong> Attività di marketing diretto/indiretto e comunicazione a partner commerciali (settore immobiliare, finanziario, assicurativo, energetico, ristrutturazioni e altri servizi per la casa)[cite: 2].</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-blue-600">2. Base giuridica</h2>
+            <ul class="list-disc ml-6 mt-2 space-y-1">
+                <li><strong>Finalità A:</strong> Esecuzione di misure precontrattuali e consenso[cite: 3].</li>
+                <li><strong>Finalità B e C:</strong> Consenso esplicito, libero e specifico dell’interessato[cite: 3].</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-blue-600">3. Modalità e Conservazione</h2>
+            <p>I dati sono trattati con strumenti elettronici e cartacei in sicurezza[cite: 4]. Il periodo di conservazione è il seguente[cite: 5]:</p>
+            <ul class="list-disc ml-6 mt-2">
+                <li><strong>Gestione richiesta (A e B):</strong> fino a 12 mesi dall’ultimo contatto[cite: 5].</li>
+                <li><strong>Marketing e Partner (C):</strong> fino a 24 mesi dal rilascio del consenso[cite: 5].</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-blue-600">4. Comunicazione e Destinatari</h2>
+            <p>Per le finalità B e C, i dati potranno essere comunicati all’Agenzia Immobiliare Partner e a partner commerciali dei settori indicati, che opereranno come autonomi titolari o responsabili esterni[cite: 8]. Eventuali trasferimenti extra UE avverranno secondo le garanzie previste dal GDPR[cite: 9, 10].</p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-blue-600">5. Diritti dell’interessato</h2>
+            <p>L'interessato può esercitare i diritti previsti dagli artt. 15–22 del GDPR[cite: 6, 7]:</p>
+            <ul class="list-grid grid grid-cols-1 md:grid-cols-2 ml-6 mt-2 gap-1 text-sm">
+                <li>• Accesso ai dati personali [cite: 7]</li>
+                <li>• Rettifica o cancellazione [cite: 7]</li>
+                <li>• Limitazione o opposizione [cite: 7]</li>
+                <li>• Portabilità dei dati [cite: 7]</li>
+                <li>• Revoca del consenso [cite: 7]</li>
+            </ul>
+            <p class="mt-4">Le richieste possono essere inviate a: <strong>[EMAIL]</strong>[cite: 7].</p>
+        </section>
+
+        <section class="mb-8 p-4 bg-gray-100 rounded-lg">
+            <h2 class="text-lg font-semibold mb-2">6. Conferimento dei dati</h2>
+            <p class="text-sm italic">Il conferimento per la finalità A è necessario per il servizio[cite: 10]. Il consenso per B e C è facoltativo: in sua mancanza non potremo trasferire i dati all'agenzia partner o svolgere attività di marketing[cite: 11].</p>
+        </section>
+
+        <div class="mt-10 pt-6 border-t border-gray-100">
+            <a href="index.html" class="text-blue-600 font-semibold hover:underline">← Torna alla pagina principale</a>
+        </div>
+    </div>
+</body>
+</html>
